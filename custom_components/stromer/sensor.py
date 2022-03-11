@@ -50,14 +50,14 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
-        key="batter_SOC",
+        key="battery_SOC",
         name="Battery",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
-        key="batter_health",
+        key="battery_health",
         name="Battery Condition",
         native_unit_of_measurement=PERCENTAGE,
         device_class=None,
