@@ -1,9 +1,9 @@
 {
   "config": {
-    "flow_title": "Stromer bike",
+    "flow_title": "Stromer e-bike",
     "step": {
       "user": {
-        "description": "Provide your stromer API details",
+        "description": "Provide your Stromer API details",
         "data": {
           "password": "Password",
           "username" : "Username",
