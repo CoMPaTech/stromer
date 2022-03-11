@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 class Stromer:
     """Set up Stromer."""
 
-    def __init__(self, username, password, client_id, client_secret, timeout=30):
+    def __init__(self, username, password, client_id, client_secret, timeout=60):
         self.bike = {}
         self.status = {}
         self.position = {}

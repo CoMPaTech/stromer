@@ -50,14 +50,14 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
-        key="batter_SOC",
+        key="battery_SOC",
         name="Battery",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
-        key="batter_health",
+        key="battery_health",
         name="Battery Condition",
         native_unit_of_measurement=PERCENTAGE,
         device_class=None,
@@ -72,7 +72,7 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
     ),
     SensorEntityDescription(
         key="bike_speed",
-        name="Speed",
+        name="Bike Speed",
         native_unit_of_measurement=SPEED_KILOMETERS_PER_HOUR,
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
@@ -90,6 +90,13 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
         native_unit_of_measurement=None,
         device_class=None,
         state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    SensorEntityDescription(
+        key="speed",
+        name="Speed",
+        native_unit_of_measurement=SPEED_KILOMETERS_PER_HOUR,
+        device_class=None,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="total_distance",

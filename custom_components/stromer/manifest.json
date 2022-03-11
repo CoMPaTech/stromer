@@ -1,7 +1,7 @@
 {
   "domain": "stromer",
   "name": "Stromer e-bike",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "documentation": "https://github.com/CoMPaTech/stromer",
   "requirements": [],
   "codeowners": ["@CoMPaTech"],
