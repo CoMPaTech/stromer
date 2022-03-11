@@ -1,26 +1,17 @@
 """Stromer Sensor component for Home Assistant."""
 from __future__ import annotations
-from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
 
-from homeassistant.components.sensor import (
-    SensorDeviceClass,
-    SensorEntity,
-    SensorEntityDescription,
-    SensorStateClass,
-)
-from homeassistant.const import (
-    LENGTH_KILOMETERS,
-    SPEED_KILOMETERS_PER_HOUR,
-    PRESSURE_BAR,
-    PERCENTAGE,
-    TIME_SECONDS,
-    TEMP_CELSIUS,
-    POWER_WATT,
-)
+from homeassistant.components.sensor import (SensorDeviceClass, SensorEntity,
+                                             SensorEntityDescription,
+                                             SensorStateClass)
+from homeassistant.const import (LENGTH_KILOMETERS, PERCENTAGE, POWER_WATT,
+                                 PRESSURE_BAR, SPEED_KILOMETERS_PER_HOUR,
+                                 TEMP_CELSIUS, TIME_SECONDS)
+
+from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
 
 from .const import DOMAIN
 from .entity import StromerEntity
-
 
 SENSORS: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(

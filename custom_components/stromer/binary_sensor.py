@@ -1,16 +1,13 @@
 """Stromer binary sensor component for Home Assistant."""
 from __future__ import annotations
-from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
-
-
-from homeassistant.components.binary_sensor import (
-    BinarySensorEntity,
-    BinarySensorEntityDescription,
-)
-from homeassistant.helpers.entity import EntityCategory
 
 from dataclasses import dataclass
 
+from homeassistant.components.binary_sensor import (
+    BinarySensorEntity, BinarySensorEntityDescription)
+from homeassistant.helpers.entity import EntityCategory
+
+from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
 
 from .const import DOMAIN
 from .entity import StromerEntity
@@ -56,7 +53,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     for idx, data in enumerate(coordinator.data.bikedata.items()):
         for description in BINARY_SENSORS:
             if data[0] == description.key:
-                entities.append(StromerBinarySensor(coordinator, idx, data, description))
+                entities.append(
+                    StromerBinarySensor(coordinator, idx, data, description)
+                )
 
     async_add_entities(entities, update_before_add=False)
 

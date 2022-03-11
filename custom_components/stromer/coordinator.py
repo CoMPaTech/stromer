@@ -1,13 +1,13 @@
 """DataUpdateCoordinator for Stromer."""
 from typing import Any, NamedTuple
 
-from .stromer import Stromer
-
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.update_coordinator import (DataUpdateCoordinator,
+                                                      UpdateFailed)
 
 from .const import DOMAIN, LOGGER
+from .stromer import Stromer
 
 
 class StromerData(NamedTuple):

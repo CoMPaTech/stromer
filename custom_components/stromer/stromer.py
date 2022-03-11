@@ -2,12 +2,12 @@
 
 __version__ = "0.0.3a0"
 
-import aiohttp
 import json
+import logging
 import re
 from urllib.parse import urlencode
 
-import logging
+import aiohttp
 
 LOGGER = logging.getLogger(__name__)
 
