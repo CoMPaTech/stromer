@@ -13,13 +13,13 @@
       }
     },
     "error": {
-      "already_configured": "This device is already configured",
-      "invalid_auth": "Invalid authentication, check your password and/or ID/SECRET",
-      "cannot_connect": "Cannot connect",
-      "unknown": "Unknown error!"
+      "already_configured": "[%key:common::config_flow::error::already_configured%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalud_auth%]",
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
     },
     "abort": {
-      "already_configured": "This device is already configured"
+      "already_configured": "[%key:common::config_flow::error::already_configured%]"
     }
   }
 }
