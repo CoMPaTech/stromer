@@ -17,28 +17,28 @@ from .entity import StromerEntity
 
 
 @dataclass
-class PlugwiseBinarySensorEntityDescription(BinarySensorEntityDescription):
-    """Describes a Plugwise binary sensor entity."""
+class StromerBinarySensorEntityDescription(BinarySensorEntityDescription):
+    """Describes a Stromer binary sensor entity."""
 
     icon_off: str | None = None
 
 
-BINARY_SENSORS: tuple[BinarySensorEntityDescription, ...] = (
-    BinarySensorEntityDescription(
+BINARY_SENSORS: tuple[StromerBinarySensorEntityDescription, ...] = (
+    StromerBinarySensorEntityDescription(
         key="light_on",
         name="Light on",
         icon="mdi:lightbulb",
         icon_off="mdi:lightbulb-off",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    BinarySensorEntityDescription(
+    StromerBinarySensorEntityDescription(
         key="lock_flag",
         name="Bike Lock",
         icon="mdi:lock",
         icon_off="mdi:lock-open",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    BinarySensorEntityDescription(
+    StromerBinarySensorEntityDescription(
         key="theft_flag",
         name="Theft flag",
         icon="mdi:alarm-light",
