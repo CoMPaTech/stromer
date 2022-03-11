@@ -1,0 +1,7 @@
+__pycache__
+.vscode
+ha-core
+venv
+clean
+*.sedbck
+*.swp

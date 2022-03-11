@@ -1,0 +1,6 @@
+{
+  "name": "Stromer custom component",
+  "domains": ["binary_sensor","sensor"],
+  "homeassistant": "2022.3.0",
+  "render_readme": true
+}

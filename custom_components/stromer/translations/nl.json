@@ -1,0 +1,25 @@
+{
+  "config": {
+    "flow_title": "Stromer e-bike",
+    "step": {
+      "user": {
+        "description": "Stromer API gegevens",
+        "data": {
+          "password": "Wachtwoord",
+          "username" : "Gebruikersnaam",
+          "client_id": "Client ID",
+          "client_secret": "Client Secret"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "Deze e-bike is al geconfigureerd",
+      "invalid_auth": "Authenticatie mislukt, controleer je wachtwoord en/of ID/SECRET",
+      "cannot_connect": "Verbinden mislukt",
+      "unknown": "Onbekende fout!"
+    },
+    "abort": {
+      "already_configured": "Deze e-bike is al geconfigureerd"
+    }
+  }
+}

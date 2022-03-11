@@ -1,0 +1,10 @@
+{
+  "domain": "stromer",
+  "name": "Stromer bike",
+  "version": "0.0.1",
+  "documentation": "https://github.com/CoMPaTech/stromer-beta",
+  "requirements": ["ipython==7.28.0"],
+  "codeowners": ["@CoMPaTech"],
+  "iot_class": "cloud_polling",
+  "config_flow": true
+}
