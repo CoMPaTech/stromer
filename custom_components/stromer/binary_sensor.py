@@ -9,26 +9,41 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.helpers.entity import EntityCategory
 
+from dataclasses import dataclass
+
 
 from .const import DOMAIN
 from .entity import StromerEntity
+
+
+@dataclass
+class PlugwiseBinarySensorEntityDescription(BinarySensorEntityDescription):
+    """Describes a Plugwise binary sensor entity."""
+
+    icon_off: str | None = None
 
 
 BINARY_SENSORS: tuple[BinarySensorEntityDescription, ...] = (
     BinarySensorEntityDescription(
         key="light_on",
         name="Light on",
-        entity_category=EntityCategory.LIGHT,
+        icon="mdi:lightbulb",
+        icon_off="mdi:lightbulb-off",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     BinarySensorEntityDescription(
         key="lock_flag",
         name="Bike Lock",
-        entity_category=EntityCategory.LOCK,
+        icon="mdi:lock",
+        icon_off="mdi:lock-open",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     BinarySensorEntityDescription(
         key="theft_flag",
         name="Theft flag",
-        entity_category=EntityCategory.TAMPER,
+        icon="mdi:alarm-light",
+        icon_off="mdi:shield-moon",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
 )
 
