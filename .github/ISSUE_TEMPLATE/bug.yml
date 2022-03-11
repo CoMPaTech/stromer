@@ -1,0 +1,107 @@
+name: Bug or problem.
+description: Report an issue with the Stromer Bike integration
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Describe the bug.
+      description: >-
+        Tell us what you were trying to do and what happened. Provide a clear and concise description of what the problem is.
+  - type: markdown
+    attributes:
+      value: |
+        ## Environment
+  - type: input
+    id: version
+    validations:
+      required: true
+    attributes:
+      label: What version of Home Assistant Core has the issue?
+      placeholder: core-
+      description: >
+        Can be found in: [Configuration panel -> Info](https://my.home-assistant.io/redirect/info/).
+
+        [![Open your Home Assistant instance and show your Home Assistant version information.](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/)
+  - type: input
+    attributes:
+      label: What was the last working version of Home Assistant Core?
+      placeholder: core-
+      description: >
+        If known, otherwise leave blank.
+  - type: dropdown
+    validations:
+      required: true
+    attributes:
+      label: What type of installation are you running?
+      description: >
+        Can be found in: [Configuration panel -> Info](https://my.home-assistant.io/redirect/info/).
+
+        When selecting `Core`: remember to specify your way of running in the `additional information` textarea at the bottom, including your python version!
+
+        [![Open your Home Assistant instance and show your Home Assistant version information.](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/)
+      options:
+        - Home Assistant OS
+        - Home Assistant Container
+        - Home Assistant Supervised
+        - Home Assistant Core
+  - type: dropdown
+    validations:
+      required: true
+    attributes:
+      label: How did you install the stromer integration
+      description: >
+        You could be using the core-integration and just asked to leave feedback/improvements here, but more likely you installed either through HACS or manually as a `custom_component`.
+
+      options:
+        - HACS
+        - Manually installed `custom_component`
+        - Cloned from GitHub
+  - type: markdown
+    attributes:
+      value: |
+        # Details
+  - type: textarea
+    attributes:
+      label: Logging
+      description: >-
+        Very important to understand the problem, enable logging for `stromer` in `configuration.yaml` by adding:
+
+        ```
+        logger:
+          default: warn
+          logs:
+            custom_components.stromer: debug
+            stromer: debug
+        ```
+
+        After adding this, restart HA Core.
+
+        After the restart has finished please look in the supervisor **Core** logs (follow the below link and select 'Core' from the dropdown).
+
+        [![Open your Home Assistant instance and show the supervisor logs.](https://my.home-assistant.io/badges/supervisor_logs.svg)](https://my.home-assistant.io/redirect/supervisor_logs/)
+
+        There should be several lines related to `stromer`. Please show us the **complete** log-message that starts this:
+
+        ```[custom_components.stromer] ...```
+
+  - type: textarea
+    attributes:
+      label: Diagnostics information
+      description: >-
+        The Stromer integration provides the ability to download diagnostic data
+        on the device page (and on the integration dashboard).
+
+        **It would really help if you could download the diagnostics data for the device you are having issues with,
+        and drag-and-drop that file into the textbox below.**
+
+        It generally allows pinpointing defects and thus resolving issues faster.
+
+        [![Open your Home Assistant instance and show the integration page.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/)
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: >
+        If you have any additional information for us, use the field below. Especially if only using Home Assistant Core, provide us with additional details including your python version.
