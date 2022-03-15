@@ -1,6 +1,6 @@
 """Stromer module for Home Assistant Core."""
 
-__version__ = "0.0.3a0"
+__version__ = "0.0.4"
 
 import json
 import logging
@@ -55,25 +55,32 @@ class Stromer:
         return self.status
 
     async def stromer_update(self):
-        try:
-            self.bike = await self.stromer_call_api(endpoint="bike/")
-            LOGGER.debug("Stromer bike: {}".format(self.bike))
+        attempts = 0
+        while attempts < 5:
+            attempts += 1
+            try:
+                LOGGER.debug("Stromer attempt: {}/5".format(attempts))
+                self.bike = await self.stromer_call_api(endpoint="bike/")
+                LOGGER.debug("Stromer bike: {}".format(self.bike))
 
-            self.bike_id = self.bike["bikeid"]
-            self.bike_name = self.bike["nickname"]
-            self.bike_model = self.bike["biketype"]
+                self.bike_id = self.bike["bikeid"]
+                self.bike_name = self.bike["nickname"]
+                self.bike_model = self.bike["biketype"]
 
-            endpoint = f"bike/{self.bike_id}/state/"
-            data = {"cached": "false"}
-            # LOGGER.debug("Stromer endpoint: {}".format(endpoint))
-            self.status = await self.stromer_call_api(endpoint=endpoint, data=data)
-            LOGGER.debug("Stromer status: {}".format(self.status))
+                endpoint = f"bike/{self.bike_id}/state/"
+                data = {"cached": "false"}
+                # LOGGER.debug("Stromer endpoint: {}".format(endpoint))
+                self.status = await self.stromer_call_api(endpoint=endpoint, data=data)
+                LOGGER.debug("Stromer status: {}".format(self.status))
 
-            endpoint = f"bike/{self.bike_id}/position/"
-            self.position = await self.stromer_call_api(endpoint=endpoint, data=data)
-            LOGGER.debug("Stromer position: {}".format(self.position))
-        except Exception as e:
-            LOGGER.error("Stromer error: api call failed: {}".format(e))
+                endpoint = f"bike/{self.bike_id}/position/"
+                self.position = await self.stromer_call_api(endpoint=endpoint, data=data)
+                LOGGER.debug("Stromer position: {}".format(self.position))
+                break
+
+            except Exception as e:
+                LOGGER.error("Stromer error: api call failed: {}".format(e))
+                LOGGER.debug("Stromer retry: {}/5".format(attempts))
 
     async def stromer_get_code(self):
         base_url = "https://api3.stromer-portal.ch"
