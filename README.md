@@ -30,6 +30,10 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 
 # Changelog
 
+## APR 2022 [0.0.7]
+  - Fix sensory updates
+  - Potentially fix token expiration
+
 ## MAR 2022 [0.0.4]
   - Initial release
   - Creates a device for your bike in Home Assistant

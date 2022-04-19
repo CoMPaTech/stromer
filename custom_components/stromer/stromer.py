@@ -1,6 +1,6 @@
 """Stromer module for Home Assistant Core."""
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 
 import json
 import logging
