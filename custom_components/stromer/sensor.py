@@ -164,6 +164,7 @@ class StromerSensor(StromerEntity, SensorEntity):
         self._idx = idx
         self._ent = data[0]
         self._data = data[1]
+        self._coordinator = coordinator
 
         device_id = coordinator.data.bike_id
 
@@ -174,4 +175,4 @@ class StromerSensor(StromerEntity, SensorEntity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._data
+        return self._coordinator.bike.bikedata.get(self._ent)
