@@ -175,4 +175,4 @@ class StromerSensor(StromerEntity, SensorEntity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._coordinator.bike.bikedata.get(self._ent)
+        return self._coordinator.data.bikedata.get(self._ent)

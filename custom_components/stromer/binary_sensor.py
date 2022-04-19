@@ -86,4 +86,4 @@ class StromerBinarySensor(StromerEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool | None:
         """Return true if the binary sensor is on."""
-        return self._coordinator.bike.bikedata.get(self._ent)
+        return self._coordinator.data.bikedata.get(self._ent)

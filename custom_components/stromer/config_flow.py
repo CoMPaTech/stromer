@@ -19,7 +19,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         vol.Required(CONF_USERNAME): str,
         vol.Required(CONF_PASSWORD): str,
         vol.Required(CONF_CLIENT_ID): str,
-        vol.Required(CONF_CLIENT_SECRET): str,
+        vol.Optional(CONF_CLIENT_SECRET): str,
     }
 )
 
@@ -29,7 +29,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     username = data[CONF_USERNAME]
     password = data[CONF_PASSWORD]
     client_id = data[CONF_CLIENT_ID]
-    client_secret = data[CONF_CLIENT_SECRET]
+    client_secret = data.get(CONF_CLIENT_SECRET, None)
 
     # Initialize connection to stromer
     stromer = Stromer(username, password, client_id, client_secret)
