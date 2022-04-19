@@ -61,11 +61,13 @@ class Stromer:
 
     async def stromer_update(self):
         attempts = 0
-        while attempts < 5:
+        while attempts < 10:
+            if attempts == 5:
+                LOGGER.info("Reconnecting to Stromer API")
+                await self.stromer_connect()
             attempts += 1
-            await self.stromer_get_access_token()
             try:
-                LOGGER.debug("Stromer attempt: {}/5".format(attempts))
+                LOGGER.debug("Stromer attempt: {}/10".format(attempts))
                 self.bike = await self.stromer_call_api(endpoint="bike/")
                 LOGGER.debug("Stromer bike: {}".format(self.bike))
 
@@ -86,7 +88,7 @@ class Stromer:
 
             except Exception as e:
                 LOGGER.error("Stromer error: api call failed: {}".format(e))
-                LOGGER.debug("Stromer retry: {}/5".format(attempts))
+                LOGGER.debug("Stromer retry: {}/10".format(attempts))
 
     async def stromer_get_code(self):
         url = f"{self.base_url}/mobile/v4/login/"

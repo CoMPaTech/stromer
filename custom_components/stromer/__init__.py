@@ -24,7 +24,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     username = entry.data[CONF_USERNAME]
     password = entry.data[CONF_PASSWORD]
     client_id = entry.data[CONF_CLIENT_ID]
-    client_secret = entry.data[CONF_CLIENT_SECRET]
+    client_secret = entry.data.get(CONF_CLIENT_SECRET, None)
 
     # Initialize connection to stromer
     stromer = Stromer(username, password, client_id, client_secret)
