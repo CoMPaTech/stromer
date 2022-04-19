@@ -138,7 +138,7 @@ class Stromer:
 
         if self._api_version == 'v3':
             url = f"{self.base_url}/o/token/"
-            data["client_secret"] = self._client_secret,
+            data["client_secret"] = self._client_secret
             data["redirect_uri"] = "stromerauth://auth"
 
         res = await self._websession.post(url, data=data)
