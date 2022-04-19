@@ -1,6 +1,6 @@
 """Stromer module for Home Assistant Core."""
 
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 
 import json
 import logging
@@ -19,6 +19,10 @@ class Stromer:
         self.bike = {}
         self.status = {}
         self.position = {}
+        
+        self._api_version = 'v4'
+        if client_secret:
+            self._api_version = 'v3'
         self.base_url = "https://api3.stromer-portal.ch"
 
         self._timeout = timeout
@@ -85,7 +89,9 @@ class Stromer:
                 LOGGER.debug("Stromer retry: {}/5".format(attempts))
 
     async def stromer_get_code(self):
-        url = f"{self.base_url}/users/login/"
+        url = f"{self.base_url}/mobile/v4/login/"
+        if self._api_version == 'v3':
+            url = f"{self.base_url}/users/login/"
         res = await self._websession.get(url)
         cookie = res.headers.get("Set-Cookie")
         pattern = "=(.*?);"
@@ -104,8 +110,11 @@ class Stromer:
             "password": self._password,
             "username": self._username,
             "csrfmiddlewaretoken": csrftoken,
-            "next": "/o/authorize/?" + qs,
+            "next": "/mobile/v4/o/authorize/?" + qs
         }
+
+        if self._api_version == 'v3':
+            data["next"]= "/o/authorize/?" + qs
 
         res = await self._websession.post(
             url, data=data, headers=dict(Referer=url), allow_redirects=False
@@ -117,21 +126,28 @@ class Stromer:
         self._code = self._code.split("=")[1]
 
     async def stromer_get_access_token(self):
-        url = f"{self.base_url}/o/token/"
+        url = f"{self.base_url}/mobile/v4/o/token/"
         data = {
             "grant_type": "authorization_code",
             "client_id": self._client_id,
-            "client_secret": self._client_secret,
             "code": self._code,
-            "redirect_uri": "stromerauth://auth",
+            "redirect_uri": "stromer://auth",
         }
+
+        if self._api_version == 'v3':
+            url = f"{self.base_url}/o/token/"
+            data["client_secret"] = self._client_secret,
+            data["redirect_uri"] = "stromerauth://auth"
 
         res = await self._websession.post(url, data=data)
         token = json.loads(await res.text())
         self._token = token["access_token"]
 
     async def stromer_call_api(self, endpoint, data={}):
-        url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
+        url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
+        if self._api_version == 'v3':
+            url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
+
         headers = {"Authorization": f"Bearer {self._token}"}
         # LOGGER.debug("token %s" % self._token)
         res = await self._websession.get(url, headers=headers, data={})
