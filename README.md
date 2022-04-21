@@ -41,6 +41,13 @@ trigger:
   - platform: state
     entity_id: binary_sensor.stromer_bike_lock
     to: 'on'
+  - platform: numeric_state
+    entity_id: sensor.s_eve_speed
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    below: '5'
 condition: []
 action:
   - service: homeassistant.turn_off

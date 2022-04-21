@@ -1,6 +1,6 @@
 {
-  "name": "Stromer custom component",
-  "domains": ["binary_sensor","sensor"],
+  "name": "Stromer E-Bike",
+  "domains": ["binary_sensor","sensor", "device_tracker"],
   "homeassistant": "2022.3.0",
   "render_readme": true
 }
