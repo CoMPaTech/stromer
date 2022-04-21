@@ -18,11 +18,93 @@ Configure this integration the usual way, before starting you will need to retri
 
 For the API using a tool like MITM-proxy so you can intercept traffic between the app on your phone and the Stromer API.
 
-Additional the setup flow will ask you for your username (i.e. e-mail address) and password for the Stromer API
+Additional the setup flow will ask you for your username (i.e. e-mail address) and password for the Stromer API and the secrets retrieved through MITM-proxy.
 
 ## What it provides
 
 In the current state it retrieves `bike`, `status` and `position` from the API every 10 minutes. It does not (yet?) provide any means of sending data to the API or your bike.
+
+## If you want more frequent updates
+
+Basically you'll have to trigger (through automations) the updates yourself. But it's the correct way to learn Home Assistant and the method shown below also saves some API calls to Stromer. Basically this will determine if the bike is **unlocked** and if so start frequent updates. The example will also show you how to add a button to immediately start the more frequent updates. And yes, I'm aware we can make blueprints of this, but I'll leave that for now until we have a broader user base and properly tested integration.
+
+- [![Open your helpers.](https://my.home-assistant.io/badges/helpers.svg)](https://my.home-assistant.io/redirect/helpers/)
+- Create a `switch` (i.e. input-boolean) named `Stromer Frequent Updates` (i.e. becoming `input_boolean.stromer_frequent_updates`. Feel free to name it otherwise, but this is what will be referred to below.
+- Create a new automation, click on the right-top three dots and select 'Edit as YAML'. Don't worry, most of it you will be able to use the visual editor for, it's just that pasting is much easier this way. Do note that you'll have to change the `stromer` part of the bike (or after pasting, select the three dots, go back to visual editor and pick the correct entity).
+
+```
+alias: Stromer cancel updates when locked
+description: ''
+trigger:
+  - platform: state
+    entity_id: binary_sensor.stromer_bike_lock
+    to: 'on'
+condition: []
+action:
+  - service: homeassistant.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.stromer_frequent_updates
+mode: single
+```
+
+- Create another automation, same process as above
+
+```
+alias: Stromer start updates when unlocked
+description: ''
+trigger:
+  - platform: state
+    entity_id: binary_sensor.stromer_bike_lock
+    to: 'off'
+condition: []
+action:
+  - service: homeassistant.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.stromer_frequent_updates
+mode: single
+```
+
+- And the final one, actually calling the updates (example every 30 seconds). We'll only point to speed, but it will update the other sensors
+
+```
+alias: Stromer update sensors
+description: ''
+trigger:
+  - platform: time_pattern
+    seconds: /30
+condition:
+  - condition: state
+    entity_id: input_boolean.stromer_frequent_updates
+    state: 'on'
+action:
+  - service: homeassistant.update_entity
+    data: {}
+    target:
+      entity_id: sensor.stromer_speed
+mode: single
+```
+
+- Final step is adding a button to your dashboard if you want to trigger updates right now. Do note that your bike must be **unlocked** before triggering, otherwise it will 'cancel itself' :) In a dashboard, click the three buttons right top, and add a `button`-card, through `view code editor` paste, switch back to visual editor and customize the below to your taste. Again pointing at speed but it will refresh if the bike is unlocked and trigger the updates helper.
+
+```
+show_name: true
+show_icon: true
+type: button
+tap_action:
+  action: call-service
+  service: homeassistant.update_entity
+  service_data: {}
+  target:
+    entity_id: sensor.stromer_speed
+entity: ''
+hold_action:
+  action: none
+name: Start Stromer updates
+icon: mdi:bike
+show_state: false
+```
 
 ## State: ALPHA
 
