@@ -30,6 +30,8 @@ Basically you'll have to trigger (through automations) the updates yourself. But
 
 - [![Open your helpers.](https://my.home-assistant.io/badges/helpers.svg)](https://my.home-assistant.io/redirect/helpers/)
 - Create a `switch` (i.e. input-boolean) named `Stromer Frequent Updates` (i.e. becoming `input_boolean.stromer_frequent_updates`. Feel free to name it otherwise, but this is what will be referred to below.
+
+- [![Open your automations.](https://my.home-assistant.io/badges/automations.svg)](https://my.home-assistant.io/redirect/automations/)
 - Create a new automation, click on the right-top three dots and select 'Edit as YAML'. Don't worry, most of it you will be able to use the visual editor for, it's just that pasting is much easier this way. Do note that you'll have to change the `stromer` part of the bike (or after pasting, select the three dots, go back to visual editor and pick the correct entity).
 
 ```
