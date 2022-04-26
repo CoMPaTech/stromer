@@ -41,13 +41,9 @@ trigger:
   - platform: state
     entity_id: binary_sensor.stromer_bike_lock
     to: 'on'
-  - platform: numeric_state
-    entity_id: sensor.s_eve_speed
-    for:
-      hours: 0
-      minutes: 10
-      seconds: 0
-    below: '5'
+  - platform: template
+    value_template: >-
+      {{ now().timestamp() - as_timestamp(states.sensor.stromer_last_status_push.state) > 600 }}
 condition: []
 action:
   - service: homeassistant.turn_off
@@ -66,6 +62,9 @@ trigger:
   - platform: state
     entity_id: binary_sensor.stromer_bike_lock
     to: 'off'
+  - platform: template
+    value_template: >-
+      {{ now().timestamp() - as_timestamp(states.sensor.stromer_last_status_push.state) > 600 }}
 condition: []
 action:
   - service: homeassistant.turn_on

@@ -31,6 +31,10 @@ class StromerDataUpdateCoordinator(DataUpdateCoordinator[StromerData]):
         try:
             await self.stromer.stromer_update()
 
+            # Rewrite position["rcvts"] as this key exists in status
+            if "rcvts" in self.stromer.position:
+                self.stromer.position["rcvts_pos"] = self.stromer.position.pop("rcvts")
+
             bike_data = self.stromer.bike
             bike_data.update(self.stromer.status)
             bike_data.update(self.stromer.position)

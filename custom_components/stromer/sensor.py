@@ -7,8 +7,10 @@ from homeassistant.components.sensor import (SensorDeviceClass, SensorEntity,
 from homeassistant.const import (LENGTH_KILOMETERS, PERCENTAGE, POWER_WATT,
                                  PRESSURE_BAR, SPEED_KILOMETERS_PER_HOUR,
                                  TEMP_CELSIUS, TIME_SECONDS)
+from homeassistant.helpers.entity import EntityCategory
 
 from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
+from datetime import datetime, timezone
 
 from .const import DOMAIN
 from .entity import StromerEntity
@@ -133,6 +135,27 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    SensorEntityDescription(
+        key="rcvts",
+        name="Last status push",
+        native_unit_of_measurement=None,
+        device_class=SensorDeviceClass.TIMESTAMP,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    SensorEntityDescription(
+        key="rcvts_pos",
+        name="Last position push",
+        native_unit_of_measurement=None,
+        device_class=SensorDeviceClass.TIMESTAMP,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    SensorEntityDescription(
+        key="timets",
+        name="Last position time",
+        native_unit_of_measurement=None,
+        device_class=SensorDeviceClass.TIMESTAMP,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
 )
 
 
@@ -172,7 +195,22 @@ class StromerSensor(StromerEntity, SensorEntity):
         self._attr_unique_id = f"{device_id}-{description.key}"
         self._attr_name = (f"{coordinator.data.bike_name} {description.name}").lstrip()
 
+    @staticmethod
+    def _ensure_timezone(timestamp: datetime | None) -> datetime | None:
+        """Calculate days left until domain expires."""
+        if timestamp is None:
+            return None
+
+        # If timezone info isn't provided by the Whois, assume UTC.
+        if timestamp.tzinfo is None:
+            return timestamp.replace(tzinfo=timezone.utc)
+
+        return timestamp
+
     @property
-    def state(self):
+    def native_value(self):
         """Return the state of the sensor."""
+        if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
+            return self._ensure_timezone(datetime.fromtimestamp(int(self._coordinator.data.bikedata.get(self._ent))))
+
         return self._coordinator.data.bikedata.get(self._ent)
