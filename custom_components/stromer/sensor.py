@@ -208,7 +208,7 @@ class StromerSensor(StromerEntity, SensorEntity):
         return timestamp
 
     @property
-    def state(self):
+    def native_value(self):
         """Return the state of the sensor."""
         if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
             return self._ensure_timezone(datetime.fromtimestamp(int(self._coordinator.data.bikedata.get(self._ent))))
