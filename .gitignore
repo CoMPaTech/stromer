@@ -5,3 +5,4 @@ venv
 clean
 *.sedbck
 *.swp
+.DS_store
