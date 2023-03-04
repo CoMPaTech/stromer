@@ -2,9 +2,9 @@
   "domain": "stromer",
   "name": "Stromer e-bike",
   "codeowners": ["@CoMPaTech"],
-  "config_flow": true
+  "config_flow": true,
   "documentation": "https://github.com/CoMPaTech/stromer",
   "iot_class": "cloud_polling",
   "requirements": [],
-  "version": "0.2.0a1",
+  "version": "0.2.0a1"
 }
