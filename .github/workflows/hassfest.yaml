@@ -7,17 +7,9 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  check_requirements:
+  hassfest_custom:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: "actions/checkout@v3"
-      - name: Verify Hassfest type
-        id: hassfest-verify
-        run: |
-          echo "::set-output name=hassfest::$(grep -q -E "require.*http.*test-files.pythonhosted.*#" custom_components/plugwise/manifest.json && echo lite || echo full)"
-      - name: Not running hassfest!
-        if: ${{ steps.hassfest-verify.outputs.hassfest == 'lite' }}
-        run: |
-          echo "Unable to run home-assistant/actions/hassfest@master due to test package usage"
+      - uses: "actions/checkout@v3.3.0"
       - uses: home-assistant/actions/hassfest@master
-        if: ${{ steps.hassfest-verify.outputs.hassfest == 'full' }}
+
