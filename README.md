@@ -120,6 +120,16 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 
 # Changelog
 
+## MAR 2023 [0.2.0]
+  - Fix 2023.3 compliancy
+
+## APR 2022 [0.1.0]
+  - Include last update sensors
+
+## APR 2022 [0.0.8]
+  - v4 API support
+  - Data handling and reconnection
+
 ## APR 2022 [0.0.7]
   - Fix sensory updates
   - Potentially fix token expiration
