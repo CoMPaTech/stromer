@@ -7,9 +7,18 @@
   ],
   "packageRules": [
     {
-      "matchPackagePrefixes": ["@types/"],
+      "matchManagers": ["github-actions"],
       "automerge": true
-      }
+    },
+    {
+      "matchManagers": ["pip_requirements","poetry","setup-cfg"],
+      "automerge": true
+    },
+    {
+      "matchManagers": ["pre-commit"],
+      "automerge": true
+    }
+  ]
   ]
 }
 
