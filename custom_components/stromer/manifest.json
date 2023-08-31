@@ -6,5 +6,5 @@
   "documentation": "https://github.com/CoMPaTech/stromer",
   "iot_class": "cloud_polling",
   "requirements": [],
-  "version": "0.2.0"
+  "version": "0.2.1"
 }
