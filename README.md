@@ -120,6 +120,9 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 
 # Changelog
 
+## AUG 2023 [0.2.1]
+  - Quickfix sensors lost due to some data not available
+
 ## MAR 2023 [0.2.0]
   - Fix 2023.3 compliancy
 
