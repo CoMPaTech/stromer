@@ -120,6 +120,9 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 
 # Changelog
 
+## SEP 2023 [0.2.2]
+  - Fix location (i.e. `device_tracker`) reporting
+
 ## AUG 2023 [0.2.1]
   - Quickfix sensors lost due to some data not available
 
