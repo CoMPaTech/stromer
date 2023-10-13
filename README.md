@@ -120,6 +120,10 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 
 # Changelog
 
+## SEP 2023 [0.2.3]
+  - Conform to hacs and HA files
+  - Adding HACS validation
+
 ## SEP 2023 [0.2.2]
   - Fix location (i.e. `device_tracker`) reporting
 
