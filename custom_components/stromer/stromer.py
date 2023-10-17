@@ -90,12 +90,20 @@ class Stromer:
                 LOGGER.error("Stromer error: api call failed: {}".format(e))
                 LOGGER.debug("Stromer retry: {}/10".format(attempts))
 
+        LOGGER.error("Stromer error: api call failed 10 times, cowardly failing")
+        raise ApiError
+
     async def stromer_get_code(self):
         url = f"{self.base_url}/mobile/v4/login/"
         if self._api_version == 'v3':
             url = f"{self.base_url}/users/login/"
         res = await self._websession.get(url)
-        cookie = res.headers.get("Set-Cookie")
+        try:
+            cookie = res.headers.get("Set-Cookie")
+        except Exception as e:
+            LOGGER.error("Stromer error: api call failed: {}".format(e))
+            raise ApiError
+
         pattern = "=(.*?);"
         csrftoken = re.search(pattern, cookie).group(1)
 
@@ -157,3 +165,7 @@ class Stromer:
         # LOGGER.debug("ret %s" % ret)
         # LOGGER.debug("res status %s" % res.status)
         return ret["data"][0]
+
+class ApiError(Exception):
+    """Error to indicate something wrong with the API."""
+

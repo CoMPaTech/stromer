@@ -120,6 +120,9 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 
 # Changelog
 
+## OCT 2023 [0.2.4]
+  - Improve quality
+
 ## SEP 2023 [0.2.3]
   - Conform to hacs and HA files
   - Adding HACS validation

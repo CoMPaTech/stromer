@@ -9,7 +9,7 @@ from homeassistant.helpers import device_registry as dr
 
 from .const import CONF_CLIENT_ID, CONF_CLIENT_SECRET, DOMAIN, LOGGER
 from .coordinator import StromerDataUpdateCoordinator
-from .stromer import Stromer
+from .stromer import Stromer, ApiError
 
 SCAN_INTERVAL = timedelta(minutes=10)
 
@@ -28,7 +28,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # Initialize connection to stromer
     stromer = Stromer(username, password, client_id, client_secret)
-    await stromer.stromer_connect()
+    try:
+        await stromer.stromer_connect()
+    except ApiError as ex:
+        raise ConfigEntryNotReady("Error while communicating to Stromer API") from ex
+
     LOGGER.debug("Stromer entry: {}".format(entry))
 
     # Use Bike ID as unique id
@@ -63,4 +67,4 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         hass.data[DOMAIN].pop(entry.entry_id)
 
-    return
+    return unload_ok

@@ -13,7 +13,6 @@ from homeassistant.exceptions import HomeAssistantError
 from .const import CONF_CLIENT_ID, CONF_CLIENT_SECRET, DOMAIN, LOGGER
 from .stromer import Stromer
 
-# TODO adjust the data schema to the data that you need
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_USERNAME): str,
@@ -24,7 +23,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 )
 
 
-async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
+async def validate_input(_, data: dict[str, Any]) -> dict[str, Any]:
     """Validate the user input allows us to connect."""
     username = data[CONF_USERNAME]
     password = data[CONF_PASSWORD]
