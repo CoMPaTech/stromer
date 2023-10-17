@@ -100,12 +100,11 @@ class Stromer:
         res = await self._websession.get(url)
         try:
             cookie = res.headers.get("Set-Cookie")
+            pattern = "=(.*?);"
+            csrftoken = re.search(pattern, cookie).group(1)
         except Exception as e:
-            LOGGER.error("Stromer error: api call failed: {}".format(e))
+            LOGGER.error(f"Stromer error: api call failed: {e} with content {res}")
             raise ApiError
-
-        pattern = "=(.*?);"
-        csrftoken = re.search(pattern, cookie).group(1)
 
         qs = urlencode(
             {
