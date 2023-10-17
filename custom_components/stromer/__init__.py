@@ -31,7 +31,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     try:
         await stromer.stromer_connect()
     execpt ApiError as ex:
-        raise ConfigEntryNotReady(fError while communicating to Stromer API") from ex
+        raise ConfigEntryNotReady("Error while communicating to Stromer API") from ex
 
     LOGGER.debug("Stromer entry: {}".format(entry))
 
