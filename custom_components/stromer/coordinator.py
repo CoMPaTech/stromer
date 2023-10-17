@@ -7,7 +7,7 @@ from homeassistant.helpers.update_coordinator import (DataUpdateCoordinator,
                                                       UpdateFailed)
 
 from .const import DOMAIN, LOGGER
-from .stromer import Stromer
+from .stromer import Stromer, ApiError
 
 
 class StromerData(NamedTuple):
@@ -47,7 +47,3 @@ class StromerDataUpdateCoordinator(DataUpdateCoordinator[StromerData]):
         except ApiError as err:
             raise UpdateFailed(f"Error communicating with API: {err}")
         return StromerData(*data)
-
-
-class ApiError(BaseException):
-    """Error to indicate something wrong with the API."""
