@@ -4,7 +4,7 @@ from __future__ import annotations
 from homeassistant.components.sensor import (SensorDeviceClass, SensorEntity,
                                              SensorEntityDescription,
                                              SensorStateClass)
-from homeassistant.const import (LENGTH_KILOMETERS, PERCENTAGE, POWER_WATT,
+from homeassistant.const import (ENERGY_WATT_HOUR, LENGTH_KILOMETERS, PERCENTAGE, POWER_WATT,
                                  PRESSURE_BAR, SPEED_KILOMETERS_PER_HOUR,
                                  TEMP_CELSIUS, TIME_SECONDS)
 from homeassistant.helpers.entity import EntityCategory
@@ -33,7 +33,7 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
         key="average_energy_consumption",
         name="Energy used (average)",
-        native_unit_of_measurement=POWER_WATT,
+        native_unit_of_measurement=ENERGY_WATT_HOUR,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
@@ -110,7 +110,7 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
         key="total_energy_consumption",
         name="Energy used (total)",
-        native_unit_of_measurement=POWER_WATT,
+        native_unit_of_measurement=ENERGY_WATT_HOUR,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
