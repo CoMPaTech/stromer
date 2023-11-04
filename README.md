@@ -120,6 +120,9 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 
 # Changelog
 
+## NOV 2023 [0.2.5]
+  - Fix unit from W to Wh (thanks @Tinus78) via #46
+
 ## OCT 2023 [0.2.4]
   - Improve quality
 
