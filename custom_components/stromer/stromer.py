@@ -84,8 +84,8 @@ class Stromer:
                 endpoint = f"bike/{self.bike_id}/position/"
                 self.position = await self.stromer_call_api(endpoint=endpoint, data=data)
                 LOGGER.debug("Stromer position: {}".format(self.position))
-                break
-
+                return
+
             except Exception as e:
                 LOGGER.error("Stromer error: api call failed: {}".format(e))
                 LOGGER.debug("Stromer retry: {}/10".format(attempts))
