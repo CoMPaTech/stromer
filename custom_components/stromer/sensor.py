@@ -34,7 +34,7 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
         key="average_energy_consumption",
         name="Energy used (average)",
         native_unit_of_measurement=ENERGY_WATT_HOUR,
-        device_class=SensorDeviceClass.POWER,
+        device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
@@ -111,7 +111,7 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
         key="total_energy_consumption",
         name="Energy used (total)",
         native_unit_of_measurement=ENERGY_WATT_HOUR,
-        device_class=SensorDeviceClass.POWER,
+        device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(

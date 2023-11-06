@@ -120,6 +120,9 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 
 # Changelog
 
+## NOV 2023 [0.2.7]
+  - Fix to appropriate `device_class` from 0.2.5
+
 ## NOV 2023 [0.2.6]
   - Fix API recall (reverted maintenance approach from 0.2.5) tnx to @simonwolf83
 
