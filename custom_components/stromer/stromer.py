@@ -74,7 +74,6 @@ class Stromer:
                 self.bike_model = self.bike["biketype"]
 
                 endpoint = f"bike/{self.bike_id}/state/"
-                data = {"cached": "false"}
                 self.status = await self.stromer_call_api(endpoint=endpoint)
                 LOGGER.debug(f"Stromer status: {self.status}")
 
