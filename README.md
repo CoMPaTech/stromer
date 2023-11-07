@@ -7,6 +7,10 @@
  [![HASSfest](https://github.com/CoMPaTech/stromer/workflows/Validate%20with%20hassfest/badge.svg)](https://github.com/CoMPaTech/stromer/actions)
  [![Generic badge](https://img.shields.io/github/v/release/CoMPaTech/stromer)](https://github.com/CoMPaTech/stromer)
 
+ [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
+ [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
+ [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
+
 [![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/) 
 
 ## Configuration
@@ -204,3 +208,7 @@ I'm on Discord and used to frequent the Dutch Stromer forum more often, but feel
 ## Is it tested?
 
 It works on my bike and Home Assistant installation :) Let me know if it works on yours!
+
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-black.svg)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
+
+And [Home-Assistant Hassfest](https://github.com/home-assistant/actions) and [HACS validation](https://github.com/hacs/action)
