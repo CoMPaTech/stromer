@@ -59,7 +59,6 @@ repos:
         args:
           - --quiet
           - --format=custom
-          - --configfile=tests/bandit.yaml
         files: ^(custom_components|tests)/.+\.py$
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.32.0
