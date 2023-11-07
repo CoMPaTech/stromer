@@ -7,6 +7,11 @@
  [![HASSfest](https://github.com/CoMPaTech/stromer/workflows/Validate%20with%20hassfest/badge.svg)](https://github.com/CoMPaTech/stromer/actions)
  [![Generic badge](https://img.shields.io/github/v/release/CoMPaTech/stromer)](https://github.com/CoMPaTech/stromer)
 
+ [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-black.svg)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
+ [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
+ [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
+ [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
+
 [![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/) 
 
 ## Configuration
