@@ -1,6 +1,6 @@
-**:warning::warning::warning:Read the [release notes](https://github.com/CoMPaTech/stromer/releases) before upgrading, in case there are BREAKING changes!:warning::warning::warning:**
-
 # Stromer Custom Component for Home Assistant
+
+**:warning::warning::warning:Read the [release notes](https://github.com/CoMPaTech/stromer/releases) before upgrading, in case there are BREAKING changes!:warning::warning::warning:**
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/CoMPaTech/stomer/)
 [![CodeFactor](https://www.codefactor.io/repository/github/CoMPaTech/stromer/badge)](https://www.codefactor.io/repository/github/CoMPaTech/stromer)
@@ -38,7 +38,7 @@ Basically you'll have to trigger (through automations) the updates yourself. But
 - [![Open your automations.](https://my.home-assistant.io/badges/automations.svg)](https://my.home-assistant.io/redirect/automations/)
 - Create a new automation, click on the right-top three dots and select 'Edit as YAML'. Don't worry, most of it you will be able to use the visual editor for, it's just that pasting is much easier this way. Do note that you'll have to change the `stromer` part of the bike (or after pasting, select the three dots, go back to visual editor and pick the correct entity).
 
-```
+```automation.yml
 alias: Stromer cancel updates when locked
 description: ''
 trigger:
@@ -59,7 +59,7 @@ mode: single
 
 - Create another automation, same process as above
 
-```
+```automation.yml
 alias: Stromer start updates when unlocked
 description: ''
 trigger:
@@ -80,7 +80,7 @@ mode: single
 
 - And the final one, actually calling the updates (example every 30 seconds). We'll only point to speed, but it will update the other sensors
 
-```
+```automation.yml
 alias: Stromer update sensors
 description: ''
 trigger:
@@ -100,7 +100,7 @@ mode: single
 
 - Final step is adding a button to your dashboard if you want to trigger updates right now. Do note that your bike must be **unlocked** before triggering, otherwise it will 'cancel itself' :) In a dashboard, click the three buttons right top, and add a `button`-card, through `view code editor` paste, switch back to visual editor and customize the below to your taste. Again pointing at speed but it will refresh if the bike is unlocked and trigger the updates helper.
 
-```
+```lovelace.yml
 show_name: true
 show_icon: true
 type: button
@@ -122,17 +122,17 @@ show_state: false
 
 Even though available does not mean it's stable yet, the HA part is solid but the class used to interact with the API is in need of improvement (e.g. better overall handling). This might also warrant having the class available as a module from pypi.
 
-# Changelog
+## Changelog
 
-## NOV 2023 [0.2.7]
+### NOV 2023 [0.2.7]
 
 - Fix to appropriate `device_class` from 0.2.5
 
-## NOV 2023 [0.2.6]
+### NOV 2023 [0.2.6]
 
 - Fix API recall (reverted maintenance approach from 0.2.5) tnx to @simonwolf83
 
-## NOV 2023 [0.2.5]
+### NOV 2023 [0.2.5]
 
 - Fix unit from W to Wh (thanks @Tinus78) via #46
 
@@ -140,44 +140,44 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 
 - Improve quality
 
-## SEP 2023 [0.2.3]
+### SEP 2023 [0.2.3]
 
 - Conform to hacs and HA files
 - Adding HACS validation
 
-## SEP 2023 [0.2.2]
+### SEP 2023 [0.2.2]
 
 - Fix location (i.e. `device_tracker`) reporting
 
-## AUG 2023 [0.2.1]
+### AUG 2023 [0.2.1]
 
 - Quickfix sensors lost due to some data not available
 
-## MAR 2023 [0.2.0]
+### MAR 2023 [0.2.0]
 
 - Fix 2023.3 compliancy
 
-## APR 2022 [0.1.0]
+### APR 2022 [0.1.0]
 
 - Include last update sensors
 
-## APR 2022 [0.0.8]
+### APR 2022 [0.0.8]
 
 - v4 API support
 - Data handling and reconnection
 
-## APR 2022 [0.0.7]
+### APR 2022 [0.0.7]
 
 - Fix sensory updates
 - Potentially fix token expiration
 
-## MAR 2022 [0.0.4]
+### MAR 2022 [0.0.4]
 
 - Initial release
 - Creates a device for your bike in Home Assistant
 - Refreshed location and other information every 10 minutes
 
-# What does it support?
+## What does it support?
 
 - Location
   - It inherits zones, but you could also plot your location on a map
@@ -186,14 +186,14 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 - Binary Sensors
   - Light-status and Omni-lock status and theft status
 
-# How to install?
+## How to install?
 
 - Use [HACS](https://hacs.xyz)
 - Navigate to the `Integrations` page and use the three-dots icon on the top right to add a custom repository.
 - Use the link to this page as the URL and select 'Integrations' as the category.
 - Look for `Stromer` in `Integrations` and install it!
 
-## How to add the integration to HA Core
+### How to add the integration to HA Core
 
 For each bike (i.e. api-user) you will have to add it as an integration. Do note that you first have to retrieve your client ID and Secret using some tool like [mitmproxy](https://mitmproxy.org) to fetch these. If you don't know how to do this or what this implies; search from someone who can eloborate on this or do not use this integration. For more details and/or helpful users see [the Dutch Stromer forum](https://www.speedpedelecreview.com/forum/viewtopic.php?f=8&t=1445)
 
@@ -203,9 +203,9 @@ For each bike (i.e. api-user) you will have to add it as an integration. Do note
 - [ ] Search or browse for 'Stromer e-bike' and click it
 - [ ] Enter your e-mail address, password and the client ID and Secret
 
-# Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
-## I don't like the name of the sensor or the icon
+### I don't like the name of the sensor or the icon
 
 You can adjust these in `Configuration`, `Integration` -> `Entities` (e.g. `https://{Your HA address}/config/entities`)
 
@@ -213,11 +213,11 @@ Just click on the device and adjust accordingly!
 
 Please note that you can also click the cogwheel right top corner to rename all entities of a device at once.
 
-## It doesn't work
+### It doesn't work
 
 I'm on Discord and used to frequent the Dutch Stromer forum more often, but feel free to add a Bug through the Issues tab on [Github](https://github.com/CoMPaTech/stromer).
 
-## Is it tested?
+### Is it tested?
 
 It works on my bike and Home Assistant installation :) Let me know if it works on yours!
 
