@@ -14,7 +14,11 @@ from .stromer import Stromer, ApiError
 
 SCAN_INTERVAL = timedelta(minutes=10)
 
-PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.DEVICE_TRACKER]
+PLATFORMS: list[Platform] = [
+    Platform.SENSOR,
+    Platform.BINARY_SENSOR,
+    Platform.DEVICE_TRACKER,
+]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -34,7 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     except ApiError as ex:
         raise ConfigEntryNotReady("Error while communicating to Stromer API") from ex
 
-    LOGGER.debug("Stromer entry: {}".format(entry))
+    LOGGER.debug(f"Stromer entry: {entry}")
 
     # Use Bike ID as unique id
     if entry.unique_id is None:

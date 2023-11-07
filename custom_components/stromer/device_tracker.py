@@ -43,9 +43,9 @@ class StromerTracker(StromerEntity, TrackerEntity):
     @property
     def latitude(self) -> float | None:
         """Return latitude value of the device."""
-        return self._coordinator.data.bikedata.get('latitude')
+        return self._coordinator.data.bikedata.get("latitude")
 
     @property
     def longitude(self) -> float | None:
         """Return longitude value of the device."""
-        return self._coordinator.data.bikedata.get('longitude')
+        return self._coordinator.data.bikedata.get("longitude")

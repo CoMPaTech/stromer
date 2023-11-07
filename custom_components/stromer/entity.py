@@ -35,11 +35,11 @@ class StromerEntity(CoordinatorEntity[StromerData]):
             name=data.get("nickname"),
             sw_version=data.get("suiversion"),
             hw_version=data.get("tntversion"),
-#            stromer_id=data.get("bike_id"),
-#            type=data.get("bikemodel"),
-#            frame_color=data.get("color"),
-#            frame_size=data.get("size"),
-#            hardware=data.get("hardware"),
+            #            stromer_id=data.get("bike_id"),
+            #            type=data.get("bikemodel"),
+            #            frame_color=data.get("color"),
+            #            frame_size=data.get("size"),
+            #            hardware=data.get("hardware"),
         )
 
         self._attr_device_info.update(
