@@ -1,17 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    ":dependencyDashboard",
-    "schedule:weekly"
-  ],
+  "extends": ["config:base", ":dependencyDashboard", "schedule:weekly"],
   "packageRules": [
     {
       "matchManagers": ["github-actions"],
       "automerge": true
     },
     {
-      "matchManagers": ["pip_requirements","poetry","setup-cfg"],
+      "matchManagers": ["pip_requirements", "poetry", "setup-cfg"],
       "automerge": true
     },
     {
@@ -20,4 +16,3 @@
     }
   ]
 }
-
