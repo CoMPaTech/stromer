@@ -1,21 +1,21 @@
-**:warning::warning::warning:Read the [release notes](<https://github.com/CoMPaTech/stromer/releases>) before upgrading, in case there are BREAKING changes!:warning::warning::warning:**
+**:warning::warning::warning:Read the [release notes](https://github.com/CoMPaTech/stromer/releases) before upgrading, in case there are BREAKING changes!:warning::warning::warning:**
 
 # Stromer Custom Component for Home Assistant
 
- [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/CoMPaTech/stomer/)
- [![CodeFactor](https://www.codefactor.io/repository/github/CoMPaTech/stromer/badge)](https://www.codefactor.io/repository/github/CoMPaTech/stromer)
- [![HASSfest](https://github.com/CoMPaTech/stromer/workflows/Validate%20with%20hassfest/badge.svg)](https://github.com/CoMPaTech/stromer/actions)
- [![Generic badge](https://img.shields.io/github/v/release/CoMPaTech/stromer)](https://github.com/CoMPaTech/stromer)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/CoMPaTech/stomer/)
+[![CodeFactor](https://www.codefactor.io/repository/github/CoMPaTech/stromer/badge)](https://www.codefactor.io/repository/github/CoMPaTech/stromer)
+[![HASSfest](https://github.com/CoMPaTech/stromer/workflows/Validate%20with%20hassfest/badge.svg)](https://github.com/CoMPaTech/stromer/actions)
+[![Generic badge](https://img.shields.io/github/v/release/CoMPaTech/stromer)](https://github.com/CoMPaTech/stromer)
 
- [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
- [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
- [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
 
-[![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/) 
+[![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/)
 
 ## Configuration
 
-Configure this integration the usual way, before starting you will need to retrieve your 
+Configure this integration the usual way, before starting you will need to retrieve your
 
 - [ ] Client ID
 - [ ] Client Secret
@@ -125,45 +125,57 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 # Changelog
 
 ## NOV 2023 [0.2.7]
-  - Fix to appropriate `device_class` from 0.2.5
+
+- Fix to appropriate `device_class` from 0.2.5
 
 ## NOV 2023 [0.2.6]
-  - Fix API recall (reverted maintenance approach from 0.2.5) tnx to @simonwolf83
+
+- Fix API recall (reverted maintenance approach from 0.2.5) tnx to @simonwolf83
 
 ## NOV 2023 [0.2.5]
-  - Fix unit from W to Wh (thanks @Tinus78) via #46
+
+- Fix unit from W to Wh (thanks @Tinus78) via #46
 
 ## OCT 2023 [0.2.4]
-  - Improve quality
+
+- Improve quality
 
 ## SEP 2023 [0.2.3]
-  - Conform to hacs and HA files
-  - Adding HACS validation
+
+- Conform to hacs and HA files
+- Adding HACS validation
 
 ## SEP 2023 [0.2.2]
-  - Fix location (i.e. `device_tracker`) reporting
+
+- Fix location (i.e. `device_tracker`) reporting
 
 ## AUG 2023 [0.2.1]
-  - Quickfix sensors lost due to some data not available
+
+- Quickfix sensors lost due to some data not available
 
 ## MAR 2023 [0.2.0]
-  - Fix 2023.3 compliancy
+
+- Fix 2023.3 compliancy
 
 ## APR 2022 [0.1.0]
-  - Include last update sensors
+
+- Include last update sensors
 
 ## APR 2022 [0.0.8]
-  - v4 API support
-  - Data handling and reconnection
+
+- v4 API support
+- Data handling and reconnection
 
 ## APR 2022 [0.0.7]
-  - Fix sensory updates
-  - Potentially fix token expiration
+
+- Fix sensory updates
+- Potentially fix token expiration
 
 ## MAR 2022 [0.0.4]
-  - Initial release
-  - Creates a device for your bike in Home Assistant
-  - Refreshed location and other information every 10 minutes
+
+- Initial release
+- Creates a device for your bike in Home Assistant
+- Refreshed location and other information every 10 minutes
 
 # What does it support?
 
