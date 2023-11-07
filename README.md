@@ -155,7 +155,7 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 
 ### MAR 2023 [0.2.0]
 
-- Fix 2023.3 compliancy
+- Fix 2023.3 compliance
 
 ### APR 2022 [0.1.0]
 
@@ -197,7 +197,7 @@ Even though available does not mean it's stable yet, the HA part is solid but th
 
 For each bike (i.e. api-user) you will have to add it as an integration. Do note that you first have to retrieve your client ID and Secret using some tool like [mitmproxy](https://mitmproxy.org) to fetch these. If you don't know how to do this or what this implies; search from someone who can eloborate on this or do not use this integration. For more details and/or helpful users see [the Dutch Stromer forum](https://www.speedpedelecreview.com/forum/viewtopic.php?f=8&t=1445)
 
-- [ ] In Home Assitant click on `Configuration`
+- [ ] In Home Assistant click on `Configuration`
 - [ ] Click on `Integrations`
 - [ ] Hit the `+` button in the right lower corner
 - [ ] Search or browse for 'Stromer e-bike' and click it
