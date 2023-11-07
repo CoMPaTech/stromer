@@ -44,11 +44,9 @@ class Stromer:
 
         # Retrieve authorization token
         await self.stromer_get_code()
-        # LOGGER.debug("Stromer code: {}".format(self._code))
 
         # Retrieve access token
         await self.stromer_get_access_token()
-        # LOGGER.debug("Stromer token: {}".format(self._token))
 
         try:
             await self.stromer_update()
@@ -77,12 +75,11 @@ class Stromer:
 
                 endpoint = f"bike/{self.bike_id}/state/"
                 data = {"cached": "false"}
-                # LOGGER.debug("Stromer endpoint: {}".format(endpoint))
-                self.status = await self.stromer_call_api(endpoint=endpoint, data=data)
+                self.status = await self.stromer_call_api(endpoint=endpoint)
                 LOGGER.debug("Stromer status: {}".format(self.status))
 
                 endpoint = f"bike/{self.bike_id}/position/"
-                self.position = await self.stromer_call_api(endpoint=endpoint, data=data)
+                self.position = await self.stromer_call_api(endpoint=endpoint)
                 LOGGER.debug("Stromer position: {}".format(self.position))
                 return
 
@@ -152,17 +149,16 @@ class Stromer:
         token = json.loads(await res.text())
         self._token = token["access_token"]
 
-    async def stromer_call_api(self, endpoint, data={}):
+    async def stromer_call_api(self, endpoint):
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == 'v3':
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
 
         headers = {"Authorization": f"Bearer {self._token}"}
-        # LOGGER.debug("token %s" % self._token)
         res = await self._websession.get(url, headers=headers, data={})
         ret = json.loads(await res.text())
-        # LOGGER.debug("ret %s" % ret)
-        # LOGGER.debug("res status %s" % res.status)
+        LOGGER.debug("API call status: %s" % res.status)
+        LOGGER.debug("API call returns: %s" % ret)
         return ret["data"][0]
 
 class ApiError(Exception):
