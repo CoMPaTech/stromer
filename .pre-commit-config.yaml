@@ -1,0 +1,82 @@
+# For pre-commit.ci
+ci:
+  # Defer autoupdate to quarterly (there is no 'off' button) to have renovate pick up first
+  autoupdate_schedule: quarterly
+  submodules: true
+
+default_language_version:
+  # force all unspecified python hooks to run python3
+  python: python3.12
+
+repos:
+  # Run manually in CI skipping the branch checks
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.3
+    hooks:
+      - id: ruff
+        name: "Ruff-ing code"
+        args:
+          - --fix
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-executables-have-shebangs
+        stages: [manual]
+      - id: no-commit-to-branch
+        name: "Verifying git branch exists"
+        args:
+          - --branch=main
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.0
+    hooks:
+      - id: pyupgrade
+        name: "Checking pyupgrade"
+        args: [--py311-plus]
+  - repo: https://github.com/psf/black
+    rev: 23.10.1
+    hooks:
+      - id: black
+        name: "Verifying/updating code using black"
+        args:
+          - --safe
+          - --quiet
+        files: ^((custom_components|tests)/.+)?[^/]+\.py$
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.6
+    hooks:
+      - id: codespell
+        name: "Verifying/updating code for spelling issues"
+        args:
+          - --ignore-words-list=hass,alot,datas,dof,dur,ether,farenheit,hist,iff,iif,ines,ist,lightsensor,mut,nd,pres,referer,rime,ser,serie,te,technik,ue,uint,visability,wan,wanna,withing,iam,incomfort,ba,haa,pullrequests
+          - --skip="./.*,*.csv,*.json"
+          - --quiet-level=2
+        exclude_types: [csv, json]
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.32.0
+    hooks:
+      - id: yamllint
+        name: "Linting yaml"
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.3
+    hooks:
+      - id: prettier
+        name: "Verifying/updating code with prettier"
+  - repo: https://github.com/cdce8p/python-typing-update
+    rev: v0.6.0
+    hooks:
+      # Run `python-typing-update` hook manually from time to time
+      # to update python typing syntax.
+      # Will require manual work, before submitting changes!
+      - id: python-typing-update
+        name: "Verifying code for typing-update"
+        stages: [manual]
+        args:
+          - --py311-plus
+          - --force
+          - --keep-updates
+        files: ^(custom_components|tests)/.+\.py$
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.37.0
+    hooks:
+      - id: markdownlint
+        name: "Linting Markdown"

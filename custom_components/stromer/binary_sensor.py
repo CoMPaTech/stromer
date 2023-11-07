@@ -4,7 +4,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from homeassistant.components.binary_sensor import (
-    BinarySensorEntity, BinarySensorEntityDescription)
+    BinarySensorEntity,
+    BinarySensorEntityDescription,
+)
 from homeassistant.helpers.entity import EntityCategory
 
 from custom_components.stromer.coordinator import StromerDataUpdateCoordinator

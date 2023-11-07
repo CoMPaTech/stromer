@@ -19,10 +19,10 @@ class Stromer:
         self.bike = {}
         self.status = {}
         self.position = {}
-        
-        self._api_version = 'v4'
+
+        self._api_version = "v4"
         if client_secret:
-            self._api_version = 'v3'
+            self._api_version = "v3"
         self.base_url = "https://api3.stromer-portal.ch"
 
         self._timeout = timeout
@@ -44,16 +44,14 @@ class Stromer:
 
         # Retrieve authorization token
         await self.stromer_get_code()
-        # LOGGER.debug("Stromer code: {}".format(self._code))
 
         # Retrieve access token
         await self.stromer_get_access_token()
-        # LOGGER.debug("Stromer token: {}".format(self._token))
 
         try:
             await self.stromer_update()
         except Exception as e:
-            LOGGER.error("Stromer unable to update: {}".format(e))
+            LOGGER.error(f"Stromer unable to update: {e}")
 
         LOGGER.debug("Stromer connected!")
 
@@ -67,35 +65,33 @@ class Stromer:
                 await self.stromer_connect()
             attempts += 1
             try:
-                LOGGER.debug("Stromer attempt: {}/10".format(attempts))
+                LOGGER.debug(f"Stromer attempt: {attempts}/10")
                 self.bike = await self.stromer_call_api(endpoint="bike/")
-                LOGGER.debug("Stromer bike: {}".format(self.bike))
+                LOGGER.debug(f"Stromer bike: {self.bike}")
 
                 self.bike_id = self.bike["bikeid"]
                 self.bike_name = self.bike["nickname"]
                 self.bike_model = self.bike["biketype"]
 
                 endpoint = f"bike/{self.bike_id}/state/"
-                data = {"cached": "false"}
-                # LOGGER.debug("Stromer endpoint: {}".format(endpoint))
-                self.status = await self.stromer_call_api(endpoint=endpoint, data=data)
-                LOGGER.debug("Stromer status: {}".format(self.status))
+                self.status = await self.stromer_call_api(endpoint=endpoint)
+                LOGGER.debug(f"Stromer status: {self.status}")
 
                 endpoint = f"bike/{self.bike_id}/position/"
-                self.position = await self.stromer_call_api(endpoint=endpoint, data=data)
-                LOGGER.debug("Stromer position: {}".format(self.position))
+                self.position = await self.stromer_call_api(endpoint=endpoint)
+                LOGGER.debug(f"Stromer position: {self.position}")
                 return
 
             except Exception as e:
-                LOGGER.error("Stromer error: api call failed: {}".format(e))
-                LOGGER.debug("Stromer retry: {}/10".format(attempts))
+                LOGGER.error(f"Stromer error: api call failed: {e}")
+                LOGGER.debug(f"Stromer retry: {attempts}/10")
 
         LOGGER.error("Stromer error: api call failed 10 times, cowardly failing")
         raise ApiError
 
     async def stromer_get_code(self):
         url = f"{self.base_url}/mobile/v4/login/"
-        if self._api_version == 'v3':
+        if self._api_version == "v3":
             url = f"{self.base_url}/users/login/"
         res = await self._websession.get(url)
         try:
@@ -119,11 +115,11 @@ class Stromer:
             "password": self._password,
             "username": self._username,
             "csrfmiddlewaretoken": csrftoken,
-            "next": "/mobile/v4/o/authorize/?" + qs
+            "next": "/mobile/v4/o/authorize/?" + qs,
         }
 
-        if self._api_version == 'v3':
-            data["next"]= "/o/authorize/?" + qs
+        if self._api_version == "v3":
+            data["next"] = "/o/authorize/?" + qs
 
         res = await self._websession.post(
             url, data=data, headers=dict(Referer=url), allow_redirects=False
@@ -143,7 +139,7 @@ class Stromer:
             "redirect_uri": "stromer://auth",
         }
 
-        if self._api_version == 'v3':
+        if self._api_version == "v3":
             url = f"{self.base_url}/o/token/"
             data["client_secret"] = self._client_secret
             data["redirect_uri"] = "stromerauth://auth"
@@ -152,19 +148,18 @@ class Stromer:
         token = json.loads(await res.text())
         self._token = token["access_token"]
 
-    async def stromer_call_api(self, endpoint, data={}):
+    async def stromer_call_api(self, endpoint):
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
-        if self._api_version == 'v3':
+        if self._api_version == "v3":
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
 
         headers = {"Authorization": f"Bearer {self._token}"}
-        # LOGGER.debug("token %s" % self._token)
         res = await self._websession.get(url, headers=headers, data={})
         ret = json.loads(await res.text())
-        # LOGGER.debug("ret %s" % ret)
-        # LOGGER.debug("res status %s" % res.status)
+        LOGGER.debug("API call status: %s" % res.status)
+        LOGGER.debug("API call returns: %s" % ret)
         return ret["data"][0]
+
 
 class ApiError(Exception):
     """Error to indicate something wrong with the API."""
-

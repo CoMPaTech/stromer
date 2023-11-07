@@ -6,7 +6,7 @@
         "description": "Provide your Stromer API details",
         "data": {
           "password": "Password",
-          "username" : "Username",
+          "username": "Username",
           "client_id": "Client ID",
           "client_secret": "Client Secret (optional, not needed if your Client ID starts with 4P"
         }

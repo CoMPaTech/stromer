@@ -1,12 +1,21 @@
 """Stromer Sensor component for Home Assistant."""
 from __future__ import annotations
 
-from homeassistant.components.sensor import (SensorDeviceClass, SensorEntity,
-                                             SensorEntityDescription,
-                                             SensorStateClass)
-from homeassistant.const import (ENERGY_WATT_HOUR, LENGTH_KILOMETERS, PERCENTAGE, POWER_WATT,
-                                 PRESSURE_BAR, SPEED_KILOMETERS_PER_HOUR,
-                                 TEMP_CELSIUS, TIME_SECONDS)
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
+    SensorStateClass,
+)
+from homeassistant.const import (
+    ENERGY_WATT_HOUR,
+    LENGTH_KILOMETERS,
+    PERCENTAGE,
+    PRESSURE_BAR,
+    SPEED_KILOMETERS_PER_HOUR,
+    TEMP_CELSIUS,
+    TIME_SECONDS,
+)
 from homeassistant.helpers.entity import EntityCategory
 
 from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
@@ -211,6 +220,10 @@ class StromerSensor(StromerEntity, SensorEntity):
     def native_value(self):
         """Return the state of the sensor."""
         if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
-            return self._ensure_timezone(datetime.fromtimestamp(int(self._coordinator.data.bikedata.get(self._ent))))
+            return self._ensure_timezone(
+                datetime.fromtimestamp(
+                    int(self._coordinator.data.bikedata.get(self._ent))
+                )
+            )
 
         return self._coordinator.data.bikedata.get(self._ent)
