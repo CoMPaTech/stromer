@@ -2,9 +2,13 @@
 
 ## Changelog
 
-### DEC 2023 [0.2.8]
+### DEC 2023 [0.2.9]
 
 - Fix energy measurement to total/total_increasing
+
+### NOV 2023 [0.2.8]
+
+- Code cleanup and quality improvements
 
 ### NOV 2023 [0.2.7]
 
