@@ -15,9 +15,10 @@ from .stromer import Stromer, ApiError
 SCAN_INTERVAL = timedelta(minutes=10)
 
 PLATFORMS: list[Platform] = [
-    Platform.SENSOR,
     Platform.BINARY_SENSOR,
     Platform.DEVICE_TRACKER,
+    Platform.SENSOR,
+    Platform.SWITCH,
 ]
 
 
