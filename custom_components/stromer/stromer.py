@@ -167,7 +167,7 @@ class Stromer:
         if self._api_version == "v3":
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
 
-        data = {"lock": state}
+        data = {"mode": state}
         headers = {"Authorization": f"Bearer {self._token}"}
         res = await self._websession.post(url, headers=headers, json=data)
         ret = json.loads(await res.text())
