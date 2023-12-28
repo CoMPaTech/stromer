@@ -149,27 +149,27 @@ class Stromer:
         self._token = token["access_token"]
 
     async def stromer_call_lock(self, state):
-        endpoint = "bike/{self.bike_id}/settings/"
+        endpoint = f"bike/{self.bike_id}/settings/"
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
 
         data = {"lock": state}
         headers = {"Authorization": f"Bearer {self._token}"}
-        res = await self._websession.get(url, headers=headers, data=data)
+        res = await self._websession.get(url, headers=headers, json=data)
         ret = json.loads(await res.text())
         LOGGER.debug("API call status: %s" % res.status)
         LOGGER.debug("API call returns: %s" % ret)
 
     async def stromer_call_light(self, state):
-        endpoint = "bike/{self.bike_id}/light/"
+        endpoint = f"bike/{self.bike_id}/light/"
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
 
         data = {"lock": state}
         headers = {"Authorization": f"Bearer {self._token}"}
-        res = await self._websession.get(url, headers=headers, data=data)
+        res = await self._websession.get(url, headers=headers, json=data)
         ret = json.loads(await res.text())
         LOGGER.debug("API call status: %s" % res.status)
         LOGGER.debug("API call returns: %s" % ret)

@@ -8,7 +8,6 @@ from homeassistant.components.switch import (
     SwitchEntityDescription,
 )
 
-
 from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
 
 from .const import DOMAIN
@@ -17,14 +16,16 @@ from .entity import StromerEntity
 SWITCHES: tuple[SwitchEntityDescription, ...] = (
     SwitchEntityDescription(
         key="lock_flag",
+        name="Adjust lock state",
         translation_key="lock",
         icon="mdi:lock",
         device_class=SwitchDeviceClass.SWITCH,
     ),
     SwitchEntityDescription(
         key="light_on",
+        name="Adjust light state",
         translation_key="light",
-        icon="mdi:light",
+        icon="mdi:light-floow-down",
         device_class=SwitchDeviceClass.SWITCH,
     ),
 )
