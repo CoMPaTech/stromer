@@ -25,7 +25,7 @@ SWITCHES: tuple[SwitchEntityDescription, ...] = (
         key="light_on",
         name="Adjust light state",
         translation_key="light",
-        icon="mdi:light-floow-down",
+        icon="mdi:light-flood-down",
         device_class=SwitchDeviceClass.SWITCH,
     ),
 )

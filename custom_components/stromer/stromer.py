@@ -156,7 +156,7 @@ class Stromer:
 
         data = {"lock": state}
         headers = {"Authorization": f"Bearer {self._token}"}
-        res = await self._websession.get(url, headers=headers, json=data)
+        res = await self._websession.post(url, headers=headers, json=data)
         ret = json.loads(await res.text())
         LOGGER.debug("API call lock status: %s" % res.status)
         LOGGER.debug("API call lock returns: %s" % ret)
@@ -169,7 +169,7 @@ class Stromer:
 
         data = {"lock": state}
         headers = {"Authorization": f"Bearer {self._token}"}
-        res = await self._websession.get(url, headers=headers, json=data)
+        res = await self._websession.post(url, headers=headers, json=data)
         ret = json.loads(await res.text())
         LOGGER.debug("API call light status: %s" % res.status)
         LOGGER.debug("API call light returns: %s" % ret)
