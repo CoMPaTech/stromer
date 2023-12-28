@@ -158,8 +158,8 @@ class Stromer:
         headers = {"Authorization": f"Bearer {self._token}"}
         res = await self._websession.get(url, headers=headers, json=data)
         ret = json.loads(await res.text())
-        LOGGER.debug("API call status: %s" % res.status)
-        LOGGER.debug("API call returns: %s" % ret)
+        LOGGER.debug("API call lock status: %s" % res.status)
+        LOGGER.debug("API call lock returns: %s" % ret)
 
     async def stromer_call_light(self, state):
         endpoint = f"bike/{self.bike_id}/light/"
@@ -171,8 +171,8 @@ class Stromer:
         headers = {"Authorization": f"Bearer {self._token}"}
         res = await self._websession.get(url, headers=headers, json=data)
         ret = json.loads(await res.text())
-        LOGGER.debug("API call status: %s" % res.status)
-        LOGGER.debug("API call returns: %s" % ret)
+        LOGGER.debug("API call light status: %s" % res.status)
+        LOGGER.debug("API call light returns: %s" % ret)
 
     async def stromer_call_api(self, endpoint):
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
