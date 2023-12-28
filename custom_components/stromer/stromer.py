@@ -1,6 +1,6 @@
 """Stromer module for Home Assistant Core."""
 
-__version__ = "0.0.7"
+__version__ = "0.1.0"
 
 import json
 import logging
@@ -147,6 +147,32 @@ class Stromer:
         res = await self._websession.post(url, data=data)
         token = json.loads(await res.text())
         self._token = token["access_token"]
+
+    async def stromer_call_lock(self, state):
+        endpoint = "bike/{self.bike_id}/settings/"
+        url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
+        if self._api_version == "v3":
+            url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
+
+        data = {"lock": state}
+        headers = {"Authorization": f"Bearer {self._token}"}
+        res = await self._websession.get(url, headers=headers, data=data)
+        ret = json.loads(await res.text())
+        LOGGER.debug("API call status: %s" % res.status)
+        LOGGER.debug("API call returns: %s" % ret)
+
+    async def stromer_call_light(self, state):
+        endpoint = "bike/{self.bike_id}/light/"
+        url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
+        if self._api_version == "v3":
+            url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
+
+        data = {"lock": state}
+        headers = {"Authorization": f"Bearer {self._token}"}
+        res = await self._websession.get(url, headers=headers, data=data)
+        ret = json.loads(await res.text())
+        LOGGER.debug("API call status: %s" % res.status)
+        LOGGER.debug("API call returns: %s" % ret)
 
     async def stromer_call_api(self, endpoint):
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
