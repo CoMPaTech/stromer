@@ -16,6 +16,7 @@ class Stromer:
     """Set up Stromer."""
 
     def __init__(self, username, password, client_id, client_secret, timeout=60):
+        """Initialize stromer module."""
         self.bike = {}
         self.status = {}
         self.position = {}
@@ -39,6 +40,7 @@ class Stromer:
         self.bike_model = None
 
     async def stromer_connect(self):
+        """Connect to stromer API."""
         aio_timeout = aiohttp.ClientTimeout(total=self._timeout)
         self._websession = aiohttp.ClientSession(timeout=aio_timeout)
 
@@ -51,13 +53,15 @@ class Stromer:
         try:
             await self.stromer_update()
         except Exception as e:
-            LOGGER.error(f"Stromer unable to update: {e}")
+            log = f"Stromer unable to update: {e}"
+            LOGGER.error(log)
 
         LOGGER.debug("Stromer connected!")
 
         return self.status
 
     async def stromer_update(self):
+        """Update stromer data through API."""
         attempts = 0
         while attempts < 10:
             if attempts == 5:
@@ -65,9 +69,11 @@ class Stromer:
                 await self.stromer_connect()
             attempts += 1
             try:
-                LOGGER.debug(f"Stromer attempt: {attempts}/10")
+                log = f"Stromer attempt: {attempts}/10"
+                LOGGER.debug(log)
                 self.bike = await self.stromer_call_api(endpoint="bike/")
-                LOGGER.debug(f"Stromer bike: {self.bike}")
+                log = f"Stromer bike: {self.bike}"
+                LOGGER.debug(log)
 
                 self.bike_id = self.bike["bikeid"]
                 self.bike_name = self.bike["nickname"]
@@ -75,21 +81,26 @@ class Stromer:
 
                 endpoint = f"bike/{self.bike_id}/state/"
                 self.status = await self.stromer_call_api(endpoint=endpoint)
-                LOGGER.debug(f"Stromer status: {self.status}")
+                log = f"Stromer status: {self.status}"
+                LOGGER.debug(log)
 
                 endpoint = f"bike/{self.bike_id}/position/"
                 self.position = await self.stromer_call_api(endpoint=endpoint)
-                LOGGER.debug(f"Stromer position: {self.position}")
+                log = f"Stromer position: {self.position}"
+                LOGGER.debug(log)
                 return
 
             except Exception as e:
-                LOGGER.error(f"Stromer error: api call failed: {e}")
-                LOGGER.debug(f"Stromer retry: {attempts}/10")
+                log = f"Stromer error: api call failed: {e}"
+                LOGGER.error(log)
+                log = f"Stromer retry: {attempts}/10"
+                LOGGER.debug(log)
 
         LOGGER.error("Stromer error: api call failed 10 times, cowardly failing")
         raise ApiError
 
     async def stromer_get_code(self):
+        """Retrieve authorization code from API."""
         url = f"{self.base_url}/mobile/v4/login/"
         if self._api_version == "v3":
             url = f"{self.base_url}/users/login/"
@@ -99,7 +110,8 @@ class Stromer:
             pattern = "=(.*?);"
             csrftoken = re.search(pattern, cookie).group(1)
         except Exception as e:
-            LOGGER.error(f"Stromer error: api call failed: {e} with content {res}")
+            log = f"Stromer error: api call failed: {e} with content {res}"
+            LOGGER.error(log)
             raise ApiError
 
         qs = urlencode(
@@ -122,7 +134,7 @@ class Stromer:
             data["next"] = "/o/authorize/?" + qs
 
         res = await self._websession.post(
-            url, data=data, headers=dict(Referer=url), allow_redirects=False
+            url, data=data, headers={"Referer": url}, allow_redirects=False
         )
         next_loc = res.headers.get("Location")
         next_url = f"{self.base_url}{next_loc}"
@@ -131,6 +143,7 @@ class Stromer:
         self._code = self._code.split("=")[1]
 
     async def stromer_get_access_token(self):
+        """Retrieve access token from API."""
         url = f"{self.base_url}/mobile/v4/o/token/"
         data = {
             "grant_type": "authorization_code",
@@ -149,6 +162,7 @@ class Stromer:
         self._token = token["access_token"]
 
     async def stromer_call_lock(self, state):
+        """Lock or unlock the bike through the API."""
         endpoint = f"bike/{self.bike_id}/settings/"
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
@@ -158,10 +172,13 @@ class Stromer:
         headers = {"Authorization": f"Bearer {self._token}"}
         res = await self._websession.post(url, headers=headers, json=data)
         ret = json.loads(await res.text())
-        LOGGER.debug("API call lock status: %s" % res.status)
-        LOGGER.debug("API call lock returns: %s" % ret)
+        log = "API call lock status: %s" % res.status
+        LOGGER.debug(log)
+        log = "API call lock returns: %s" % ret
+        LOGGER.debug(log)
 
     async def stromer_call_light(self, state):
+        """Switch the bike light through the API."""
         endpoint = f"bike/{self.bike_id}/light/"
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
@@ -171,10 +188,13 @@ class Stromer:
         headers = {"Authorization": f"Bearer {self._token}"}
         res = await self._websession.post(url, headers=headers, json=data)
         ret = json.loads(await res.text())
-        LOGGER.debug("API call light status: %s" % res.status)
-        LOGGER.debug("API call light returns: %s" % ret)
+        log = "API call light status: %s" % res.status
+        LOGGER.debug(log)
+        log = "API call light returns: %s" % ret
+        LOGGER.debug(log)
 
     async def stromer_call_api(self, endpoint):
+        """Retrieve data from the API."""
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
@@ -182,8 +202,10 @@ class Stromer:
         headers = {"Authorization": f"Bearer {self._token}"}
         res = await self._websession.get(url, headers=headers, data={})
         ret = json.loads(await res.text())
-        LOGGER.debug("API call status: %s" % res.status)
-        LOGGER.debug("API call returns: %s" % ret)
+        log = "API call status: %s" % res.status
+        LOGGER.debug(log)
+        log = "API call returns: %s" % ret
+        LOGGER.debug(log)
         return ret["data"][0]
 
 

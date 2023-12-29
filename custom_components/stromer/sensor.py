@@ -1,9 +1,10 @@
 """Stromer Sensor component for Home Assistant."""
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -216,7 +217,7 @@ class StromerSensor(StromerEntity, SensorEntity):
 
         # If timezone info isn't provided by the Whois, assume UTC.
         if timestamp.tzinfo is None:
-            return timestamp.replace(tzinfo=timezone.utc)
+            return timestamp.replace(tzinfo=UTC)
 
         return timestamp
 

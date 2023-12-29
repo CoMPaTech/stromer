@@ -10,7 +10,7 @@ from homeassistant.helpers import device_registry as dr
 
 from .const import CONF_CLIENT_ID, CONF_CLIENT_SECRET, DOMAIN, LOGGER
 from .coordinator import StromerDataUpdateCoordinator
-from .stromer import Stromer, ApiError
+from .stromer import ApiError, Stromer
 
 SCAN_INTERVAL = timedelta(minutes=10)
 

@@ -1,14 +1,15 @@
 """Stromer Switch component for Home Assistant."""
 from __future__ import annotations
+
 from typing import Any
+
+from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
 
 from homeassistant.components.switch import (
     SwitchDeviceClass,
     SwitchEntity,
     SwitchEntityDescription,
 )
-
-from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
 
 from .const import DOMAIN, LOGGER
 from .entity import StromerEntity

@@ -1,10 +1,10 @@
 """Stromer binary sensor component for Home Assistant."""
 from __future__ import annotations
 
+from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
+
 from homeassistant.components.device_tracker import SourceType, TrackerEntity
 from homeassistant.helpers.entity import EntityCategory
-
-from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
 
 from .const import DOMAIN
 from .entity import StromerEntity

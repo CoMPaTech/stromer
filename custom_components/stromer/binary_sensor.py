@@ -3,13 +3,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
+
 from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
 from homeassistant.helpers.entity import EntityCategory
-
-from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
 
 from .const import DOMAIN, LOGGER
 from .entity import StromerEntity
