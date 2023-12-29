@@ -47,7 +47,7 @@
       "average_speed_trip": {
         "name": "Trip average"
       },
-      "battery_SOC": {
+      "battery_soc": {
         "name": "Battery"
       },
       "battery_health": {

@@ -47,7 +47,7 @@
       "average_speed_trip": {
         "name": "Gemiddelde snelheid (trip)"
       },
-      "battery_SOC": {
+      "battery_soc": {
         "name": "Batterij"
       },
       "battery_health": {
