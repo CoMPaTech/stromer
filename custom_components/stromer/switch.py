@@ -10,6 +10,7 @@ from homeassistant.components.switch import (
     SwitchEntity,
     SwitchEntityDescription,
 )
+from homeassistant.core import callback
 
 from .const import DOMAIN, LOGGER
 from .entity import StromerEntity
@@ -48,8 +49,6 @@ class StromerSwitch(StromerEntity, SwitchEntity):
     """Representation of a Switch."""
 
     _attr_has_entity_name = True
-    _attr_name = None
-    _attr_translation_key = DOMAIN
 
     entity_description: SwitchEntityDescription
 
@@ -68,12 +67,13 @@ class StromerSwitch(StromerEntity, SwitchEntity):
         device_id = coordinator.data.bike_id
 
         self.entity_description = description
-        self._attr_unique_id = f"{device_id}-{description.key}"
+        self._attr_unique_id = f"{device_id}-{description.key}-sw"
 
-    @property
-    def is_on(self) -> bool:
-        """Return True if entity is on."""
-        return self._coordinator.data.bikedata.get(self._ent)
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        self._attr_is_on = self._coordinator.data.bikedata.get(self._ent)
+        self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the device on."""
@@ -81,6 +81,8 @@ class StromerSwitch(StromerEntity, SwitchEntity):
             await self._coordinator.stromer.stromer_call_lock(True)
         if self.entity_description.key == "light_on":
             await self._coordinator.stromer.stromer_call_light("on")
+        # Call update on the bike so `is_on` correctly reflects status
+        await self._coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the device off."""
@@ -88,3 +90,5 @@ class StromerSwitch(StromerEntity, SwitchEntity):
             await self._coordinator.stromer.stromer_call_lock(False)
         if self.entity_description.key == "light_on":
             await self._coordinator.stromer.stromer_call_light("off")
+        # Call update on the bike so `is_on` correctly reflects status
+        await self._coordinator.async_request_refresh()

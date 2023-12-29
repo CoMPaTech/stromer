@@ -28,7 +28,9 @@ Additional the setup flow will ask you for your username (i.e. e-mail address) a
 
 In the current state it retrieves `bike`, `status` and `position` from the API every 10 minutes.
 
-There is an early implementation on toggling data on your bike, `light` and `lock` can be adjusted.
+**BETA** There is an early implementation on toggling data on your bike, `light` and `lock` can be adjusted.
+Do note that the switches do not immediately reflect the status (i.e. they will when you toggle them, but switch back quickly).
+After your 'switch' command we do request an API update to check on the status, pending that update the switch might toggle back-n-forth some time.
 
 ## If you want more frequent updates
 

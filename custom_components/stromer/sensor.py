@@ -187,8 +187,6 @@ class StromerSensor(StromerEntity, SensorEntity):
     """Representation of a Sensor."""
 
     _attr_has_entity_name = True
-    _attr_name = None
-    _attr_translation_key = DOMAIN
 
     entity_description = SensorEntityDescription
 
