@@ -27,140 +27,140 @@ from .entity import StromerEntity
 SENSORS: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
         key="assistance_level",
-        name="Assistance",
+        translation_key="assistance_level",
         native_unit_of_measurement=PERCENTAGE,
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="atmospheric_pressure",
-        name="Pressure (atmosphere)",
+        translation_key="atmospheric_pressure",
         native_unit_of_measurement=UnitOfPressure.BAR,
         device_class=SensorDeviceClass.PRESSURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="average_energy_consumption",
-        name="Energy used (average)",
+        translation_key="average_energy_consumption",
         native_unit_of_measurement=UnitOfEnergy.WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL,
     ),
     SensorEntityDescription(
         key="average_speed_total",
-        name="Total average",
+        translation_key="average_speed_total",
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="average_speed_trip",
-        name="Trip average",
+        translation_key="average_speed_trip",
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="battery_SOC",
-        name="Battery",
+        translation_key="battery_SOC",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="battery_health",
-        name="Battery Condition",
+        translation_key="battery_health",
         native_unit_of_measurement=PERCENTAGE,
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="battery_temp",
-        name="Battery Temperature",
+        translation_key="battery_temp",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="bike_speed",
-        name="Bike Speed",
+        translation_key="bike_speed",
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="motor_temp",
-        name="Motor Temperature",
+        translation_key="motor_temp",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="power_on_cycles",
-        name="Power-on cycles",
+        translation_key="power_on_cycles",
         native_unit_of_measurement=None,
         device_class=None,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     SensorEntityDescription(
         key="speed",
-        name="Speed",
+        translation_key="speed",
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="total_distance",
-        name="Total distance",
+        translation_key="total_distance",
         native_unit_of_measurement=UnitOfLength.KILOMETERS,
         device_class=None,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     SensorEntityDescription(
         key="total_energy_consumption",
-        name="Energy used (total)",
+        translation_key="total_energy_consumption",
         native_unit_of_measurement=UnitOfEnergy.WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     SensorEntityDescription(
         key="total_time",
-        name="Total time",
+        translation_key="total_time",
         native_unit_of_measurement=UnitOfTime.SECONDS,
         device_class=None,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     SensorEntityDescription(
         key="trip_distance",
-        name="Trip distance",
+        translation_key="trip_distance",
         native_unit_of_measurement=UnitOfLength.KILOMETERS,
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="trip_time",
-        name="Trip time",
+        translation_key="trip_time",
         native_unit_of_measurement=None,
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
         key="rcvts",
-        name="Last status push",
+        translation_key="rcvts",
         native_unit_of_measurement=None,
         device_class=SensorDeviceClass.TIMESTAMP,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     SensorEntityDescription(
         key="rcvts_pos",
-        name="Last position push",
+        translation_key="rcvts_pos",
         native_unit_of_measurement=None,
         device_class=SensorDeviceClass.TIMESTAMP,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     SensorEntityDescription(
         key="timets",
-        name="Last position time",
+        translation_key="timets",
         native_unit_of_measurement=None,
         device_class=SensorDeviceClass.TIMESTAMP,
         entity_category=EntityCategory.DIAGNOSTIC,
@@ -184,6 +184,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class StromerSensor(StromerEntity, SensorEntity):
     """Representation of a Sensor."""
 
+    entity_description = SensorEntityDescription
+
     def __init__(
         self,
         coordinator: StromerDataUpdateCoordinator,
@@ -193,16 +195,13 @@ class StromerSensor(StromerEntity, SensorEntity):
     ):
         """Initialize the sensor."""
         super().__init__(coordinator)
-        self._idx = idx
         self._ent = data[0]
-        self._data = data[1]
         self._coordinator = coordinator
 
         device_id = coordinator.data.bike_id
 
         self.entity_description = description
         self._attr_unique_id = f"{device_id}-{description.key}"
-        self._attr_name = (f"{coordinator.data.bike_name} {description.name}").lstrip()
 
     @staticmethod
     def _ensure_timezone(timestamp: datetime | None) -> datetime | None:

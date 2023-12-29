@@ -21,5 +21,88 @@
     "abort": {
       "already_configured": "Deze e-bike is al geconfigureerd"
     }
+  },
+  "entity": {
+    "switch": {
+      "lock": {
+        "name": "Slot"
+      },
+      "light": {
+        "name": "Lamp"
+      }
+    },
+    "sensor": {
+      "assistance_level": {
+        "name": "Ondersteuningsniveau"
+      },
+      "atmospheric_pressure": {
+        "name": "Druk (atmospherisch)"
+      },
+      "average_energy_consumption": {
+        "name": "Energiegebruik (gemiddeld)"
+      },
+      "average_speed_total": {
+        "name": "Gemiddelde snelheid (totaal)"
+      },
+      "average_speed_trip": {
+        "name": "Gemiddelde snelheid (trip)"
+      },
+      "battery_SOC": {
+        "name": "Batterij"
+      },
+      "battery_health": {
+        "name": "Batterijconditie"
+      },
+      "battery_temp": {
+        "name": "Batterijtemperatuur"
+      },
+      "bike_speed": {
+        "name": "Snelheid"
+      },
+      "motor_temp": {
+        "name": "Motortemperatuur"
+      },
+      "power_on_cycles": {
+        "name": "Power-on cycles"
+      },
+      "speed": {
+        "name": "Snelheid"
+      },
+      "total_distance": {
+        "name": "Totale afstand"
+      },
+      "total_energy_consumption": {
+        "name": "Energiegebruik (totaal)"
+      },
+      "total_time": {
+        "name": "Tijd (totaal)"
+      },
+      "trip_distance": {
+        "name": "Trip afstand"
+      },
+      "trip_time": {
+        "name": "Trip tijd"
+      },
+      "rcvts": {
+        "name": "Laatste data push"
+      },
+      "rcvts_pos": {
+        "name": "Laatste locatie push"
+      },
+      "timets": {
+        "name": "Laatste positie tijd"
+      }
+    },
+    "binary_sensor": {
+      "light_on": {
+        "name": "Lamp aan"
+      },
+      "lock_flag": {
+        "name": "Fietsslot"
+      },
+      "theft_flag": {
+        "name": "Diefstal"
+      }
+    }
   }
 }

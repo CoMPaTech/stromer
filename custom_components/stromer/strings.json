@@ -21,5 +21,88 @@
     "abort": {
       "already_configured": "This device is already configured"
     }
+  },
+  "entity": {
+    "switch": {
+      "lock": {
+        "name": "Lock"
+      },
+      "light": {
+        "name": "Light"
+      }
+    },
+    "sensor": {
+      "assistance_level": {
+        "name": "Assistance"
+      },
+      "atmospheric_pressure": {
+        "name": "Pressure (atmosphere)"
+      },
+      "average_energy_consumption": {
+        "name": "Energy used (average)"
+      },
+      "average_speed_total": {
+        "name": "Total average"
+      },
+      "average_speed_trip": {
+        "name": "Trip average"
+      },
+      "battery_SOC": {
+        "name": "Battery"
+      },
+      "battery_health": {
+        "name": "Battery Condition"
+      },
+      "battery_temp": {
+        "name": "Battery Temperature"
+      },
+      "bike_speed": {
+        "name": "Bike Speed"
+      },
+      "motor_temp": {
+        "name": "Motor Temperature"
+      },
+      "power_on_cycles": {
+        "name": "Power-on cycles"
+      },
+      "speed": {
+        "name": "Speed"
+      },
+      "total_distance": {
+        "name": "Total distance"
+      },
+      "total_energy_consumption": {
+        "name": "Energy used (total)"
+      },
+      "total_time": {
+        "name": "Total time"
+      },
+      "trip_distance": {
+        "name": "Trip distance"
+      },
+      "trip_time": {
+        "name": "Trip time"
+      },
+      "rcvts": {
+        "name": "Last status push"
+      },
+      "rcvts_pos": {
+        "name": "Last position push"
+      },
+      "timets": {
+        "name": "Last position time"
+      }
+    },
+    "binary_sensor": {
+      "light_on": {
+        "name": "Light on"
+      },
+      "lock_flag": {
+        "name": "Bike Lock"
+      },
+      "theft_flag": {
+        "name": "Theft flag"
+      }
+    }
   }
 }

@@ -16,14 +16,12 @@ from .entity import StromerEntity
 SWITCHES: tuple[SwitchEntityDescription, ...] = (
     SwitchEntityDescription(
         key="lock_flag",
-        name="Adjust lock state",
         translation_key="lock",
         icon="mdi:lock",
         device_class=SwitchDeviceClass.SWITCH,
     ),
     SwitchEntityDescription(
         key="light_on",
-        name="Adjust light state",
         translation_key="light",
         icon="mdi:light-flood-down",
         device_class=SwitchDeviceClass.SWITCH,
@@ -47,6 +45,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class StromerSwitch(StromerEntity, SwitchEntity):
     """Representation of a Switch."""
 
+    entity_description: SwitchEntityDescription
+
     def __init__(
         self,
         coordinator: StromerDataUpdateCoordinator,
@@ -56,22 +56,18 @@ class StromerSwitch(StromerEntity, SwitchEntity):
     ):
         """Initialize the sensor."""
         super().__init__(coordinator)
-        self._idx = idx
         self._ent = data[0]
-        self._data = data[1]
         self._coordinator = coordinator
 
         device_id = coordinator.data.bike_id
 
         self.entity_description = description
         self._attr_unique_id = f"{device_id}-{description.key}"
-        self._attr_name = (f"{coordinator.data.bike_name} {description.name}").lstrip()
 
-    # Not working yet
-    # @property
-    # def is_on(self) -> bool:
-    #    """Return True if entity is on."""
-    #    return self.device["switches"][self.entity_description.key]
+    @property
+    def is_on(self) -> bool:
+        """Return True if entity is on."""
+        return self._coordinator.data.bikedata.get(self._ent)
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the device on."""
