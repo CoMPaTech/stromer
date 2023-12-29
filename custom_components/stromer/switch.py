@@ -3,16 +3,17 @@ from __future__ import annotations
 
 from typing import Any
 
-from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
-
 from homeassistant.components.switch import (
     SwitchDeviceClass,
     SwitchEntity,
     SwitchEntityDescription,
 )
-from homeassistant.core import callback
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, LOGGER
+from .coordinator import StromerDataUpdateCoordinator
 from .entity import StromerEntity
 
 SWITCHES: tuple[SwitchEntityDescription, ...] = (
@@ -31,7 +32,7 @@ SWITCHES: tuple[SwitchEntityDescription, ...] = (
 )
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     """Set up the Stromer Switches from a config entry."""
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
 
@@ -45,7 +46,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities(entities, update_before_add=False)
 
 
-class StromerSwitch(StromerEntity, SwitchEntity):
+class StromerSwitch(StromerEntity, SwitchEntity):  # type: ignore[misc]
     """Representation of a Switch."""
 
     _attr_has_entity_name = True
@@ -69,7 +70,7 @@ class StromerSwitch(StromerEntity, SwitchEntity):
         self.entity_description = description
         self._attr_unique_id = f"{device_id}-{description.key}-sw"
 
-    @callback
+    @callback  # type: ignore[misc]
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._attr_is_on = self._coordinator.data.bikedata.get(self._ent)

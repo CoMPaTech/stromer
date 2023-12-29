@@ -95,7 +95,7 @@
     },
     "binary_sensor": {
       "light_on": {
-        "name": "Light on"
+        "name": "Light mode"
       },
       "lock_flag": {
         "name": "Bike Lock"

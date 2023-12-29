@@ -95,7 +95,7 @@
     },
     "binary_sensor": {
       "light_on": {
-        "name": "Lamp aan"
+        "name": "Lamp modus"
       },
       "lock_flag": {
         "name": "Fietsslot"

@@ -5,6 +5,7 @@ __version__ = "0.1.0"
 import json
 import logging
 import re
+from typing import Any
 from urllib.parse import urlencode
 
 import aiohttp
@@ -15,31 +16,31 @@ LOGGER = logging.getLogger(__name__)
 class Stromer:
     """Set up Stromer."""
 
-    def __init__(self, username, password, client_id, client_secret, timeout=60):
+    def __init__(self, username: str, password: str, client_id: str, client_secret: str, timeout: int = 60) -> None:
         """Initialize stromer module."""
-        self.bike = {}
-        self.status = {}
-        self.position = {}
+        self.bike: dict = {}
+        self.status: dict = {}
+        self.position: dict = {}
 
-        self._api_version = "v4"
+        self._api_version: str = "v4"
         if client_secret:
             self._api_version = "v3"
-        self.base_url = "https://api3.stromer-portal.ch"
+        self.base_url: str = "https://api3.stromer-portal.ch"
 
-        self._timeout = timeout
-        self._username = username
-        self._password = password
-        self._client_id = client_id
-        self._client_secret = client_secret
+        self._timeout: int = timeout
+        self._username: str = username
+        self._password: str = password
+        self._client_id: str = client_id
+        self._client_secret: str = client_secret
 
-        self._code = None
-        self._token = None
+        self._code: str | None = None
+        self._token: str | None = None
 
-        self.bike_id = None
-        self.bike_name = None
-        self.bike_model = None
+        self.bike_id: str | None = None
+        self.bike_name: str | None = None
+        self.bike_model: str | None = None
 
-    async def stromer_connect(self):
+    async def stromer_connect(self) -> dict:
         """Connect to stromer API."""
         aio_timeout = aiohttp.ClientTimeout(total=self._timeout)
         self._websession = aiohttp.ClientSession(timeout=aio_timeout)
@@ -60,7 +61,7 @@ class Stromer:
 
         return self.status
 
-    async def stromer_update(self):
+    async def stromer_update(self) -> None:
         """Update stromer data through API."""
         attempts = 0
         while attempts < 10:
@@ -99,7 +100,7 @@ class Stromer:
         LOGGER.error("Stromer error: api call failed 10 times, cowardly failing")
         raise ApiError
 
-    async def stromer_get_code(self):
+    async def stromer_get_code(self) -> None:
         """Retrieve authorization code from API."""
         url = f"{self.base_url}/mobile/v4/login/"
         if self._api_version == "v3":
@@ -108,7 +109,7 @@ class Stromer:
         try:
             cookie = res.headers.get("Set-Cookie")
             pattern = "=(.*?);"
-            csrftoken = re.search(pattern, cookie).group(1)
+            csrftoken = re.search(pattern, cookie).group(1)  # type: ignore[union-attr, arg-type]
         except Exception as e:
             log = f"Stromer error: api call failed: {e} with content {res}"
             LOGGER.error(log)
@@ -140,9 +141,9 @@ class Stromer:
         next_url = f"{self.base_url}{next_loc}"
         res = await self._websession.get(next_url, allow_redirects=False)
         self._code = res.headers.get("Location")
-        self._code = self._code.split("=")[1]
+        self._code = self._code.split("=")[1]  # type: ignore[union-attr]
 
-    async def stromer_get_access_token(self):
+    async def stromer_get_access_token(self) -> None:
         """Retrieve access token from API."""
         url = f"{self.base_url}/mobile/v4/o/token/"
         data = {
@@ -161,7 +162,7 @@ class Stromer:
         token = json.loads(await res.text())
         self._token = token["access_token"]
 
-    async def stromer_call_lock(self, state):
+    async def stromer_call_lock(self, state: bool) -> None:
         """Lock or unlock the bike through the API."""
         endpoint = f"bike/{self.bike_id}/settings/"
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
@@ -177,7 +178,7 @@ class Stromer:
         log = "API call lock returns: %s" % ret
         LOGGER.debug(log)
 
-    async def stromer_call_light(self, state):
+    async def stromer_call_light(self, state: str) -> None:
         """Switch the bike light through the API."""
         endpoint = f"bike/{self.bike_id}/light/"
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
@@ -193,7 +194,7 @@ class Stromer:
         log = "API call light returns: %s" % ret
         LOGGER.debug(log)
 
-    async def stromer_call_api(self, endpoint):
+    async def stromer_call_api(self, endpoint: str) -> Any:
         """Retrieve data from the API."""
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":

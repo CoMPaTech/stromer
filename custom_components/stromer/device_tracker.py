@@ -1,23 +1,25 @@
 """Stromer binary sensor component for Home Assistant."""
 from __future__ import annotations
 
-from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
-
 from homeassistant.components.device_tracker import SourceType, TrackerEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
+from .coordinator import StromerDataUpdateCoordinator
 from .entity import StromerEntity
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     """Set up the Stromer sensors from a config entry."""
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
 
     async_add_entities([StromerTracker(coordinator)], update_before_add=False)
 
 
-class StromerTracker(StromerEntity, TrackerEntity):
+class StromerTracker(StromerEntity, TrackerEntity):  # type: ignore[misc]
     """Representation of a Device Tracker."""
 
     def __init__(
@@ -43,9 +45,9 @@ class StromerTracker(StromerEntity, TrackerEntity):
     @property
     def latitude(self) -> float | None:
         """Return latitude value of the device."""
-        return self._coordinator.data.bikedata.get("latitude")
+        return float(self._coordinator.data.bikedata.get("latitude"))
 
     @property
     def longitude(self) -> float | None:
         """Return longitude value of the device."""
-        return self._coordinator.data.bikedata.get("longitude")
+        return float(self._coordinator.data.bikedata.get("longitude"))

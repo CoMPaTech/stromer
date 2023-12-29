@@ -31,6 +31,7 @@ In the current state it retrieves `bike`, `status` and `position` from the API e
 **BETA** There is an early implementation on toggling data on your bike, `light` and `lock` can be adjusted.
 Do note that the switches do not immediately reflect the status (i.e. they will when you toggle them, but switch back quickly).
 After your 'switch' command we do request an API update to check on the status, pending that update the switch might toggle back-n-forth some time.
+The light-switch is called 'Light mode' as depending on your bike type it will switch on/off or between 'dim and bright'.
 
 ## If you want more frequent updates
 

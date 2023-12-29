@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-
-from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
+from typing import Any
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -11,6 +10,7 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     PERCENTAGE,
     UnitOfEnergy,
@@ -20,9 +20,12 @@ from homeassistant.const import (
     UnitOfTemperature,
     UnitOfTime,
 )
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, LOGGER
+from .coordinator import StromerDataUpdateCoordinator
 from .entity import StromerEntity
 
 SENSORS: tuple[SensorEntityDescription, ...] = (
@@ -169,7 +172,7 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
 )
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     """Set up the Stromer sensors from a config entry."""
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
 
@@ -183,7 +186,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities(entities, update_before_add=False)
 
 
-class StromerSensor(StromerEntity, SensorEntity):
+class StromerSensor(StromerEntity, SensorEntity):  # type: ignore[misc]
     """Representation of a Sensor."""
 
     _attr_has_entity_name = True
@@ -220,7 +223,7 @@ class StromerSensor(StromerEntity, SensorEntity):
         return timestamp
 
     @property
-    def native_value(self):
+    def native_value(self) -> Any:
         """Return the state of the sensor."""
         if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
             return self._ensure_timezone(

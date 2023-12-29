@@ -2,7 +2,11 @@
 
 ## Changelog
 
-### DEC 2023 [0.3.0]
+### DEC 2023 [0.3.1 (alpha/beta]
+
+- Released version 0.3
+
+### DEC 2023 [0.3.0 (alpha/beta]
 
 - Introduce Lock and Light switches
 - Fix UnitOf[X] for future HA compatibility (e.g. TEMP_CELSIUS => UnitOfTemperature.CELSIUS)

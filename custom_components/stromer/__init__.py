@@ -46,7 +46,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.config_entries.async_update_entry(entry, unique_id=stromer.bike_id)
 
     # Set up coordinator for fetching data
-    coordinator = StromerDataUpdateCoordinator(hass, stromer, SCAN_INTERVAL)
+    coordinator = StromerDataUpdateCoordinator(hass, stromer, SCAN_INTERVAL)  # type: ignore[arg-type]
     await coordinator.async_config_entry_first_refresh()
 
     # Store coordinator for use in platforms
@@ -73,4 +73,4 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         hass.data[DOMAIN].pop(entry.entry_id)
 
-    return unload_ok
+    return unload_ok  # type: ignore [no-any-return]
