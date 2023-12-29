@@ -18,7 +18,7 @@
 Configure this integration the usual way, before starting you will need to retrieve your
 
 - [ ] Client ID
-- [ ] Client Secret
+- [x] Client Secret `*) only if you already have this or require APIv3`
 
 For the API using a tool like MITM-proxy so you can intercept traffic between the app on your phone and the Stromer API.
 
@@ -26,7 +26,12 @@ Additional the setup flow will ask you for your username (i.e. e-mail address) a
 
 ## What it provides
 
-In the current state it retrieves `bike`, `status` and `position` from the API every 10 minutes. It does not (yet?) provide any means of sending data to the API or your bike.
+In the current state it retrieves `bike`, `status` and `position` from the API every 10 minutes.
+
+**BETA** There is an early implementation on toggling data on your bike, `light` and `lock` can be adjusted.
+Do note that the switches do not immediately reflect the status (i.e. they will when you toggle them, but switch back quickly).
+After your 'switch' command we do request an API update to check on the status, pending that update the switch might toggle back-n-forth some time.
+The light-switch is called 'Light mode' as depending on your bike type it will switch on/off or between 'dim and bright'.
 
 ## If you want more frequent updates
 

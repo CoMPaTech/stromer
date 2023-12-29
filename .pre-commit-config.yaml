@@ -32,15 +32,6 @@ repos:
       - id: pyupgrade
         name: "Checking pyupgrade"
         args: [--py311-plus]
-  - repo: https://github.com/psf/black
-    rev: 23.12.1
-    hooks:
-      - id: black
-        name: "Verifying/updating code using black"
-        args:
-          - --safe
-          - --quiet
-        files: ^((custom_components|tests)/.+)?[^/]+\.py$
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.6
     hooks:
