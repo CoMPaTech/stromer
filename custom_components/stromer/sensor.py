@@ -185,6 +185,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class StromerSensor(StromerEntity, SensorEntity):
     """Representation of a Sensor."""
 
+    _attr_has_entity_name = True
+    _attr_name = None
+    _attr_translation_key = DOMAIN
+
     entity_description = SensorEntityDescription
 
     def __init__(

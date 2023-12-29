@@ -46,6 +46,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class StromerSwitch(StromerEntity, SwitchEntity):
     """Representation of a Switch."""
 
+    _attr_has_entity_name = True
+    _attr_name = None
+    _attr_translation_key = DOMAIN
+
     entity_description: SwitchEntityDescription
 
     def __init__(
