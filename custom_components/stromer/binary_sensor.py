@@ -11,7 +11,7 @@ from homeassistant.helpers.entity import EntityCategory
 
 from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
 
-from .const import DOMAIN
+from .const import DOMAIN, LOGGER
 from .entity import StromerEntity
 
 
@@ -57,6 +57,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             if data[0] == description.key:
                 entities.append(
                     StromerBinarySensor(coordinator, idx, data, description)
+                )
+                LOGGER.debug(
+                    "Add %s %s binary_sensor", data, description.translation_key
                 )
 
     async_add_entities(entities, update_before_add=False)

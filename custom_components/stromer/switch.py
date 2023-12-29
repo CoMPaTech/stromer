@@ -10,7 +10,7 @@ from homeassistant.components.switch import (
 
 from custom_components.stromer.coordinator import StromerDataUpdateCoordinator
 
-from .const import DOMAIN
+from .const import DOMAIN, LOGGER
 from .entity import StromerEntity
 
 SWITCHES: tuple[SwitchEntityDescription, ...] = (
@@ -38,6 +38,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         for description in SWITCHES:
             if data[0] == description.key:
                 entities.append(StromerSwitch(coordinator, idx, data, description))
+                LOGGER.debug("Add %s %s switch", data, description.translation_key)
 
     async_add_entities(entities, update_before_add=False)
 

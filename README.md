@@ -18,7 +18,7 @@
 Configure this integration the usual way, before starting you will need to retrieve your
 
 - [ ] Client ID
-- [ ] Client Secret
+- [x] Client Secret `*) only if you already have this or require APIv3`
 
 For the API using a tool like MITM-proxy so you can intercept traffic between the app on your phone and the Stromer API.
 
@@ -26,7 +26,9 @@ Additional the setup flow will ask you for your username (i.e. e-mail address) a
 
 ## What it provides
 
-In the current state it retrieves `bike`, `status` and `position` from the API every 10 minutes. It does not (yet?) provide any means of sending data to the API or your bike.
+In the current state it retrieves `bike`, `status` and `position` from the API every 10 minutes.
+
+There is an early implementation on toggling data on your bike, `light` and `lock` can be adjusted.
 
 ## If you want more frequent updates
 

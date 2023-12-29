@@ -6,6 +6,7 @@
   "documentation": "https://github.com/CoMPaTech/stromer",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/CoMPaTech/stromer/issues",
+  "integration_type": "device",
   "requirements": [],
-  "version": "0.3.0a5"
+  "version": "0.3.0a6"
 }

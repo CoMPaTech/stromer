@@ -21,7 +21,7 @@ from homeassistant.const import (
 )
 from homeassistant.helpers.entity import EntityCategory
 
-from .const import DOMAIN
+from .const import DOMAIN, LOGGER
 from .entity import StromerEntity
 
 SENSORS: tuple[SensorEntityDescription, ...] = (
@@ -177,6 +177,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         for description in SENSORS:
             if data[0] == description.key:
                 entities.append(StromerSensor(coordinator, idx, data, description))
+                LOGGER.debug("Add %s %s sensor", data, description.translation_key)
 
     async_add_entities(entities, update_before_add=False)
 
