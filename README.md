@@ -11,7 +11,9 @@
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
 
-[![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/)
+## Installation
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=compatech&repository=stroper)
 
 ## Configuration
 
