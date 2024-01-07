@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### JAN 2024 [no release, just an update]
+
+- Added to HACS default repository (yay!)
+
 ### DEC 2023 [0.3.1 (alpha/beta]
 
 - Released version 0.3
