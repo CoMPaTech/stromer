@@ -1,15 +1,13 @@
 """Stromer Button component for Home Assistant."""
 from __future__ import annotations
 
-from typing import Any
-
 from homeassistant.components.button import (
     ButtonDeviceClass,
     ButtonEntity,
     ButtonEntityDescription,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, LOGGER
@@ -61,17 +59,9 @@ class StromerButton(StromerEntity, ButtonEntity):  # type: ignore[misc]
         device_id = coordinator.data.bike_id
 
         self.entity_description = description
-        self._attr_unique_id = f"{device_id}-{description.key}-sw"
+        self._attr_unique_id = f"{device_id}-{description.key}-bu"
 
-    @callback  # type: ignore[misc]
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        self._attr_is_on = self._coordinator.data.bikedata.get(self._ent)
-        self.async_write_ha_state()
-
-    async def async_turn_on(self, **kwargs: Any) -> None:
+    async def async_press(self) -> None:
         """Handle the button press."""
         if self.entity_description.key == "reset_trip_data":
             await self._coordinator.stromer.stromer_reset_trip_data()
-        # Call update on the bike so `is_on` correctly reflects status
-        await self._coordinator.async_request_refresh()
