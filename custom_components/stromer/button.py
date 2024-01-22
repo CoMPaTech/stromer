@@ -18,8 +18,8 @@ from .entity import StromerEntity
 
 BUTTONS: tuple[ButtonEntityDescription, ...] = (
     ButtonEntityDescription(
-        key="trip_data",
-        translation_key="trip",
+        key="reset_trip_data",
+        translation_key="reset_trip_data",
         icon="mdi:map-marker-distance",
         device_class=ButtonDeviceClass.UPDATE,
     ),
@@ -71,7 +71,7 @@ class StromerButton(StromerEntity, ButtonEntity):  # type: ignore[misc]
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Handle the button press."""
-        if self.entity_description.key == "trip_data":
-            await self._coordinator.stromer.stromer_reset_trip_data("on")
+        if self.entity_description.key == "reset_trip_data":
+            await self._coordinator.stromer.stromer_reset_trip_data()
         # Call update on the bike so `is_on` correctly reflects status
         await self._coordinator.async_request_refresh()

@@ -194,7 +194,7 @@ class Stromer:
         log = "API call light returns: %s" % ret
         LOGGER.debug(log)
 
-    async def stromer_reset_trip_data(self, state: str) -> None:
+    async def stromer_reset_trip_data(self) -> None:
         """Reset the trip data through the API."""
         endpoint = f"bike/{self.bike_id}/trip_data/"
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
