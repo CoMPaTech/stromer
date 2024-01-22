@@ -18,10 +18,10 @@ from .entity import StromerEntity
 
 BUTTONS: tuple[ButtonEntityDescription, ...] = (
     ButtonEntityDescription(
-        key="reset_trip_data",
+        key="trip_distance",  # (ab)use trip_distance from the bike data to trigger adding button
         translation_key="reset_trip_data",
         icon="mdi:map-marker-distance",
-        device_class=ButtonDeviceClass.UPDATE,
+        device_class=ButtonDeviceClass.RESTART,
     ),
 )
 
