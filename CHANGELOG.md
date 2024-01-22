@@ -2,9 +2,10 @@
 
 ## Changelog
 
-### JAN 2024 [no release, just an update]
+### JAN 2024 [0.3.2 (alpha/beta)]
 
 - Added to HACS default repository (yay!)
+- Attempt to add trip_data reset button
 
 ### DEC 2023 [0.3.1 (alpha/beta]
 

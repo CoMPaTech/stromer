@@ -16,6 +16,7 @@ SCAN_INTERVAL = timedelta(minutes=10)
 
 PLATFORMS: list[Platform] = [
     Platform.BINARY_SENSOR,
+    Platform.BUTTON,
     Platform.DEVICE_TRACKER,
     Platform.SENSOR,
     Platform.SWITCH,
