@@ -196,7 +196,7 @@ class Stromer:
 
     async def stromer_reset_trip_data(self) -> None:
         """Reset the trip data through the API."""
-        endpoint = f"bike/{self.bike_id}/trip_data/"
+        endpoint = f"bike/id/{self.bike_id}/trip_data/"
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
