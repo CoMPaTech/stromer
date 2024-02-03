@@ -47,7 +47,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
       # Use Bike ID as unique id
       if entry.unique_id is None:
-          hass.config_entries.async_update_entry(entry, unique_id=this_stromer.bike_id)
+          hass.config_entries.async_update_entry(entry, unique_id=this_stromer["id"])
 
       # Set up coordinator for fetching data
       coordinator = StromerDataUpdateCoordinator(hass, this_stromer, SCAN_INTERVAL)  # type: ignore[arg-type]
@@ -60,10 +60,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
       device_registry = dr.async_get(hass)
       device_registry.async_get_or_create(
           config_entry_id=entry.entry_id,
-          identifiers={(DOMAIN, str(this_stromer.bike_id))},
+          identifiers={(DOMAIN, str(this_stromer["id"]))},
           manufacturer="Stromer",
-          name=f"{this_stromer.bike_name}",
-          model=f"{this_stromer.bike_model}",
+          name=f"{this_stromer["name"]}",
+          model=f"{this_stromer["model"]}",
       )
 
       # Set up platforms (i.e. sensors, binary_sensors)

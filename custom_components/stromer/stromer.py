@@ -1,6 +1,6 @@
 """Stromer module for Home Assistant Core."""
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 import json
 import logging
@@ -33,7 +33,7 @@ class Stromer:
         self._code: str | None = None
         self._token: str | None = None
 
-        self.bikes: dict | None = None
+        self.bikes: dict = {}
 
     async def stromer_connect(self) -> dict:
         """Connect to stromer API."""
@@ -73,20 +73,22 @@ class Stromer:
 
                 for bike in bikesdata:
 
+                  log = f"Bike data: {bike}"
+                  LOGGER.debug(log)
                   bike_id = bike["bikeid"]
                   if bike_id not in self.bikes:
-                    self.bikes[bike_id] = {"bike_id": bike_id, "bike": {}, "status": {}, "position": {}}
-                  self.bikes[bike_id].bike_name = bike["nickname"]
-                  self.bikes[bike_id].bike_model = bike["biketype"]
+                    self.bikes[bike_id] = {"id": bike_id, "name": None, "model": None, "data": {}, "status": {}, "position": {}}
+                  self.bikes[bike_id]["bike_name"] = bike["nickname"]
+                  self.bikes[bike_id]["bike_model"] = bike["biketype"]
 
                   endpoint = f"bike/{bike_id}/state/"
-                  self.bikes[bike_id].status = await self.stromer_call_api(endpoint=endpoint)
-                  log = f"Stromer {bike_id}/{bike["bike_name"]} status: {self.bikes[bike_id].status}"
+                  self.bikes[bike_id]["status"] = await self.stromer_call_api(endpoint=endpoint)
+                  log = f"Stromer {bike_id}/{bike["nickname"]} status: {self.bikes[bike_id]["status"]}"
                   LOGGER.debug(log)
 
-                  endpoint = f"bike/{self.bike_id}/position/"
-                  self.bikes[bike_id].position = await self.stromer_call_api(endpoint=endpoint)
-                  log = f"Stromer {bike_id}/{bike["bike_name"]} position: {self.bikes[bike_id].position}"
+                  endpoint = f"bike/{bike_id}/position/"
+                  self.bikes[bike_id]["position"] = await self.stromer_call_api(endpoint=endpoint)
+                  log = f"Stromer {bike_id}/{bike["biketype"]} position: {self.bikes[bike_id]["position"]}"
                   LOGGER.debug(log)
 
                 return
