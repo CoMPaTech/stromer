@@ -18,9 +18,6 @@ class Stromer:
 
     def __init__(self, username: str, password: str, client_id: str, client_secret: str, timeout: int = 60) -> None:
         """Initialize stromer module."""
-        self.bike: dict = {}
-        self.status: dict = {}
-        self.position: dict = {}
 
         self._api_version: str = "v4"
         if client_secret:
@@ -36,9 +33,7 @@ class Stromer:
         self._code: str | None = None
         self._token: str | None = None
 
-        self.bike_id: str | None = None
-        self.bike_name: str | None = None
-        self.bike_model: str | None = None
+        self.bikes: dict | None = None
 
     async def stromer_connect(self) -> dict:
         """Connect to stromer API."""
@@ -59,7 +54,7 @@ class Stromer:
 
         LOGGER.debug("Stromer connected!")
 
-        return self.status
+        return self.bikes
 
     async def stromer_update(self) -> None:
         """Update stromer data through API."""
@@ -72,23 +67,28 @@ class Stromer:
             try:
                 log = f"Stromer attempt: {attempts}/10"
                 LOGGER.debug(log)
-                self.bike = await self.stromer_call_api(endpoint="bike/")
-                log = f"Stromer bike: {self.bike}"
+                bikesdata = await self.stromer_call_api(endpoint="bike/", alldata=True)
+                log = f"Stromer bikes: {bikesdata}"
                 LOGGER.debug(log)
 
-                self.bike_id = self.bike["bikeid"]
-                self.bike_name = self.bike["nickname"]
-                self.bike_model = self.bike["biketype"]
+                for bike in bikesdata:
 
-                endpoint = f"bike/{self.bike_id}/state/"
-                self.status = await self.stromer_call_api(endpoint=endpoint)
-                log = f"Stromer status: {self.status}"
-                LOGGER.debug(log)
+                  bike_id = bike["bikeid"]
+                  if bike_id not in self.bikes:
+                    self.bikes[bike_id] = {"bike_id": bike_id, "bike": {}, "status": {}, "position": {}}
+                  self.bikes[bike_id].bike_name = bike["nickname"]
+                  self.bikes[bike_id].bike_model = bike["biketype"]
 
-                endpoint = f"bike/{self.bike_id}/position/"
-                self.position = await self.stromer_call_api(endpoint=endpoint)
-                log = f"Stromer position: {self.position}"
-                LOGGER.debug(log)
+                  endpoint = f"bike/{bike_id}/state/"
+                  self.bikes[bike_id].status = await self.stromer_call_api(endpoint=endpoint)
+                  log = f"Stromer {bike_id}/{bike["bike_name"]} status: {self.bikes[bike_id].status}"
+                  LOGGER.debug(log)
+
+                  endpoint = f"bike/{self.bike_id}/position/"
+                  self.bikes[bike_id].position = await self.stromer_call_api(endpoint=endpoint)
+                  log = f"Stromer {bike_id}/{bike["bike_name"]} position: {self.bikes[bike_id].position}"
+                  LOGGER.debug(log)
+
                 return
 
             except Exception as e:
@@ -162,9 +162,9 @@ class Stromer:
         token = json.loads(await res.text())
         self._token = token["access_token"]
 
-    async def stromer_call_lock(self, state: bool) -> None:
+    async def stromer_call_lock(self, bike_id: str, state: bool) -> None:
         """Lock or unlock the bike through the API."""
-        endpoint = f"bike/{self.bike_id}/settings/"
+        endpoint = f"bike/{bike_id}/settings/"
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
@@ -178,9 +178,9 @@ class Stromer:
         log = "API call lock returns: %s" % ret
         LOGGER.debug(log)
 
-    async def stromer_call_light(self, state: str) -> None:
+    async def stromer_call_light(self, bike_id: str, state: str) -> None:
         """Switch the bike light through the API."""
-        endpoint = f"bike/{self.bike_id}/light/"
+        endpoint = f"bike/{bike_id}/light/"
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
@@ -194,9 +194,9 @@ class Stromer:
         log = "API call light returns: %s" % ret
         LOGGER.debug(log)
 
-    async def stromer_reset_trip_data(self) -> None:
+    async def stromer_reset_trip_data(self, bike_id: str) -> None:
         """Reset the trip data through the API."""
-        endpoint = f"bike/id/{self.bike_id}/trip_data/"
+        endpoint = f"bike/id/{bike_id}/trip_data/"
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
@@ -209,7 +209,7 @@ class Stromer:
         log = "API call light returns: %s" % ret
         LOGGER.debug(log)
 
-    async def stromer_call_api(self, endpoint: str) -> Any:
+    async def stromer_call_api(self, endpoint: str, alldata=False) -> Any:
         """Retrieve data from the API."""
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
@@ -222,6 +222,8 @@ class Stromer:
         LOGGER.debug(log)
         log = "API call returns: %s" % ret
         LOGGER.debug(log)
+        if alldata:
+          return ret["data"]
         return ret["data"][0]
 
 

@@ -65,10 +65,10 @@ class StromerSwitch(StromerEntity, SwitchEntity):  # type: ignore[misc]
         self._ent = data[0]
         self._coordinator = coordinator
 
-        device_id = coordinator.data.bike_id
+        self.device_id = coordinator.data.bike_id
 
         self.entity_description = description
-        self._attr_unique_id = f"{device_id}-{description.key}-sw"
+        self._attr_unique_id = f"{self.device_id}-{description.key}-sw"
 
     @callback  # type: ignore[misc]
     def _handle_coordinator_update(self) -> None:
@@ -79,17 +79,17 @@ class StromerSwitch(StromerEntity, SwitchEntity):  # type: ignore[misc]
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the device on."""
         if self.entity_description.key == "lock_flag":
-            await self._coordinator.stromer.stromer_call_lock(True)
+            await self._coordinator.stromer.stromer_call_lock(self.device_id, True)
         if self.entity_description.key == "light_on":
-            await self._coordinator.stromer.stromer_call_light("on")
+            await self._coordinator.stromer.stromer_call_light(self.device_id, "on")
         # Call update on the bike so `is_on` correctly reflects status
         await self._coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the device off."""
         if self.entity_description.key == "lock_flag":
-            await self._coordinator.stromer.stromer_call_lock(False)
+            await self._coordinator.stromer.stromer_call_lock(self.device_id, False)
         if self.entity_description.key == "light_on":
-            await self._coordinator.stromer.stromer_call_light("off")
+            await self._coordinator.stromer.stromer_call_light(self.device_id, "off")
         # Call update on the bike so `is_on` correctly reflects status
         await self._coordinator.async_request_refresh()

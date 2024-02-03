@@ -41,30 +41,33 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         raise ConfigEntryNotReady("Error while communicating to Stromer API") from ex
 
     LOGGER.debug(f"Stromer entry: {entry}")
+    for this_stromer in stromer.bikes:
 
-    # Use Bike ID as unique id
-    if entry.unique_id is None:
-        hass.config_entries.async_update_entry(entry, unique_id=stromer.bike_id)
+      LOGGER.debug(f"Stromer with bike data: {this_stromer}")
 
-    # Set up coordinator for fetching data
-    coordinator = StromerDataUpdateCoordinator(hass, stromer, SCAN_INTERVAL)  # type: ignore[arg-type]
-    await coordinator.async_config_entry_first_refresh()
+      # Use Bike ID as unique id
+      if entry.unique_id is None:
+          hass.config_entries.async_update_entry(entry, unique_id=this_stromer.bike_id)
 
-    # Store coordinator for use in platforms
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
+      # Set up coordinator for fetching data
+      coordinator = StromerDataUpdateCoordinator(hass, this_stromer, SCAN_INTERVAL)  # type: ignore[arg-type]
+      await coordinator.async_config_entry_first_refresh()
 
-    # Add bike to the HA device registry
-    device_registry = dr.async_get(hass)
-    device_registry.async_get_or_create(
-        config_entry_id=entry.entry_id,
-        identifiers={(DOMAIN, str(stromer.bike_id))},
-        manufacturer="Stromer",
-        name=f"{stromer.bike_name}",
-        model=f"{stromer.bike_model}",
-    )
+      # Store coordinator for use in platforms
+      hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
 
-    # Set up platforms (i.e. sensors, binary_sensors)
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+      # Add bike to the HA device registry
+      device_registry = dr.async_get(hass)
+      device_registry.async_get_or_create(
+          config_entry_id=entry.entry_id,
+          identifiers={(DOMAIN, str(this_stromer.bike_id))},
+          manufacturer="Stromer",
+          name=f"{this_stromer.bike_name}",
+          model=f"{this_stromer.bike_model}",
+      )
+
+      # Set up platforms (i.e. sensors, binary_sensors)
+      await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
 

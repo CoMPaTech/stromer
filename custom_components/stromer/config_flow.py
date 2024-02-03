@@ -37,7 +37,7 @@ async def validate_input(_: HomeAssistant, data: dict[str, Any]) -> dict[str, An
         raise InvalidAuth
 
     # Return info that you want to store in the config entry.
-    return {"title": stromer.bike_name}
+    return {"title": "Stromer bikes"}
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, misc]

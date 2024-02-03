@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### FEB 2024 [0.4.0 (alpha/beta)]
+
+- Continued from unreleased trip_data reset
+- Add multiple bike support
+
 ### JAN 2024 [0.3.2 (alpha/beta)]
 
 - Added to HACS default repository (yay!)
