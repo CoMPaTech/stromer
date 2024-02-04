@@ -36,6 +36,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Initialize connection to stromer
     stromer = Stromer(username, password, client_id, client_secret)
     try:
+        stromer.bike_id =  entry.data["bike_id"]
+        stromer.bike_name = entry.data["nickname"]
+        stromer.bike_model =  entry.data["model"]
         await stromer.stromer_connect()
     except ApiError as ex:
         raise ConfigEntryNotReady("Error while communicating to Stromer API") from ex
