@@ -23,6 +23,11 @@
     }
   },
   "entity": {
+    "button": {
+      "reset_trip_data": {
+        "name": "Reset trip data"
+      }
+    },
     "switch": {
       "lock": {
         "name": "Slot"
