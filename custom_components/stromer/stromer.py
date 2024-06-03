@@ -204,9 +204,9 @@ class Stromer:
         headers = {"Authorization": f"Bearer {self._token}"}
         res = await self._websession.delete(url, headers=headers)
         ret = json.loads(await res.text())
-        log = "API call light status: %s" % res.status
+        log = "API reset trip status: %s" % res.status
         LOGGER.debug(log)
-        log = "API call light returns: %s" % ret
+        log = "API reset trip returns: %s" % ret
         LOGGER.debug(log)
 
     async def stromer_call_api(self, endpoint: str) -> Any:
