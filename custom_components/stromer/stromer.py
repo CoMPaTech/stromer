@@ -1,6 +1,6 @@
 """Stromer module for Home Assistant Core."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 import json
 import logging
@@ -193,6 +193,18 @@ class Stromer:
         LOGGER.debug(log)
         log = "API call light returns: %s" % ret
         LOGGER.debug(log)
+
+    async def stromer_reset_trip_data(self) -> None:
+        """Reset the trip data through the API."""
+        endpoint = f"bike/id/{self.bike_id}/trip_data/"
+        url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
+        if self._api_version == "v3":
+            url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
+
+        headers = {"Authorization": f"Bearer {self._token}"}
+        res = await self._websession.delete(url, headers=headers)
+        if res.status != 204:
+            raise ApiError
 
     async def stromer_call_api(self, endpoint: str) -> Any:
         """Retrieve data from the API."""

@@ -36,6 +36,8 @@ Do note that the switches do not immediately reflect the status (i.e. they will 
 After your 'switch' command we do request an API update to check on the status, pending that update the switch might toggle back-n-forth some time.
 The light-switch is called 'Light mode' as depending on your bike type it will switch on/off or between 'dim and bright'.
 
+**BETA** As with the `switch` implementation a `button` is added to reset your trip_data.
+
 ## If you want more frequent updates
 
 Basically you'll have to trigger (through automations) the updates yourself. But it's the correct way to learn Home Assistant and the method shown below also saves some API calls to Stromer. Basically this will determine if the bike is **unlocked** and if so start frequent updates. The example will also show you how to add a button to immediately start the more frequent updates. And yes, I'm aware we can make blueprints of this, but I'll leave that for now until we have a broader user base and properly tested integration.

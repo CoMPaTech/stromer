@@ -2,7 +2,16 @@
 
 ## Changelog
 
-### JAN 2024 [no release, just an update]
+### Ongoing
+
+- Add multibike support (see 0.4 beta progress)
+
+### JUN 2024 [0.3.2]
+
+- Added trip_reset button
+- Released v0.3(.2) as new stable version
+
+### JAN 2024
 
 - Added to HACS default repository (yay!)
 
@@ -10,7 +19,7 @@
 
 - Released version 0.3
 
-### DEC 2023 [0.3.0 (alpha/beta]
+### DEC 2023 [0.3.0 (alpha/beta)]
 
 - Introduce Lock and Light switches
 - Fix UnitOf[X] for future HA compatibility (e.g. TEMP_CELSIUS => UnitOfTemperature.CELSIUS)
