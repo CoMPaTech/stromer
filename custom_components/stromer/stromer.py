@@ -203,7 +203,7 @@ class Stromer:
 
         headers = {"Authorization": f"Bearer {self._token}"}
         res = await self._websession.delete(url, headers=headers)
-        if ret.status != 204:
+        if res.status != 204:
             raise ApiError
 
     async def stromer_call_api(self, endpoint: str) -> Any:
