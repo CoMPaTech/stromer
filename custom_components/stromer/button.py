@@ -63,5 +63,5 @@ class StromerButton(StromerEntity, ButtonEntity):  # type: ignore[misc]
 
     async def async_press(self) -> None:
         """Handle the button press."""
-        if self.entity_description.key == "reset_trip_data":
+        if self.entity_description.key == "trip_distance":
             await self._coordinator.stromer.stromer_reset_trip_data()
