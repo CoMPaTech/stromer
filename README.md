@@ -14,7 +14,7 @@
 
 ## Requirements
 
-A Stromer bike that has "Mobile phone network" connectivity. This *excludes* the standard ST1 without the "Upgrade" (see https://www.stromerbike.com/en/swiss-technology-connectivity-omni). ST2, ST3, ST5 and ST7 come standard with the required connectivity.
+A Stromer bike that has "Mobile phone network" connectivity. This *excludes* the standard ST1 without the "Upgrade" (see [Stromer Connectivity](https://www.stromerbike.com/en/swiss-technology-connectivity-omni)). ST2, ST3, ST5 and ST7 come standard with the required connectivity.
 
 ## Installation
 
