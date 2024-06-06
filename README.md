@@ -12,6 +12,10 @@
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=CoMPaTech_stromer&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=CoMPaTech_stromer)
 
+## Requirements
+
+A Stromer bike that has "Mobile phone network" connectivity. This *excludes* the standard ST1 without the "Upgrade" (see [Stromer Connectivity](https://www.stromerbike.com/en/swiss-technology-connectivity-omni)). ST2, ST3, ST5 and ST7 come standard with the required connectivity.
+
 ## Installation
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=CoMPaTech&repository=stromer&category=integrations)
