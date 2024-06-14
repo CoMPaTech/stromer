@@ -1,6 +1,6 @@
 """Stromer module for Home Assistant Core."""
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 import json
 import logging
@@ -36,6 +36,7 @@ class Stromer:
         self._code: str | None = None
         self._token: str | None = None
 
+        self.full_data: dict = {}
         self.bike_id: str | None = None
         self.bike_name: str | None = None
         self.bike_model: str | None = None
@@ -51,15 +52,28 @@ class Stromer:
         # Retrieve access token
         await self.stromer_get_access_token()
 
-        try:
-            await self.stromer_update()
-        except Exception as e:
-            log = f"Stromer unable to update: {e}"
-            LOGGER.error(log)
+#        try:
+#            await self.stromer_update()
+#        except Exception as e:
+#            log = f"Stromer unable to update: {e}"
+#            LOGGER.error(log)
 
         LOGGER.debug("Stromer connected!")
 
-        return self.status
+#        return self.status
+        return True
+
+    async def stromer_detect(self) -> dict:
+        """Get full data (to determine bike(s))."""
+        try:
+            self.full_data = await self.stromer_call_api(endpoint="bike/", full=True)
+        except Exception as e:
+            log = f"Stromer unable to fetch full data: {e}"
+            LOGGER.error(log)
+
+        log = f"Stromer full_data : {self.full_data}"
+        LOGGER.debug(log)
+        return self.full_data
 
     async def stromer_update(self) -> None:
         """Update stromer data through API."""
@@ -72,13 +86,12 @@ class Stromer:
             try:
                 log = f"Stromer attempt: {attempts}/10"
                 LOGGER.debug(log)
-                self.bike = await self.stromer_call_api(endpoint="bike/")
-                log = f"Stromer bike: {self.bike}"
-                LOGGER.debug(log)
+#                self.full_data = await self.stromer_call_api(endpoint="bike/")
+#                log = f"Stromer bike: {self.full_data}"
+#                LOGGER.debug(log)
 
-                self.bike_id = self.bike["bikeid"]
-                self.bike_name = self.bike["nickname"]
-                self.bike_model = self.bike["biketype"]
+#                self.bike_name = self.bike["nickname"]
+#                self.bike_model = self.bike["biketype"]
 
                 endpoint = f"bike/{self.bike_id}/state/"
                 self.status = await self.stromer_call_api(endpoint=endpoint)
@@ -206,7 +219,7 @@ class Stromer:
         if res.status != 204:
             raise ApiError
 
-    async def stromer_call_api(self, endpoint: str) -> Any:
+    async def stromer_call_api(self, endpoint: str, full=False) -> Any:
         """Retrieve data from the API."""
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
@@ -219,6 +232,8 @@ class Stromer:
         LOGGER.debug(log)
         log = "API call returns: %s" % ret
         LOGGER.debug(log)
+        if full:
+          return ret["data"]
         return ret["data"][0]
 
 
