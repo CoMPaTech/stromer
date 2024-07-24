@@ -1,0 +1,113 @@
+{
+  "config": {
+    "flow_title": "Stromer e-bike",
+    "step": {
+      "user": {
+        "description": "Insrir os detalhes da tua chave de API da  Stromer",
+        "data": {
+          "password": "Palavra-passe",
+          "username": "Utilizador",
+          "client_id": "Identificador de cliente",
+          "client_secret": "Segredo de cliente  (opcional não necessário caso o teu cliente começe por 4P"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "Equipamento já se encontra onfigurado",
+      "invalid_auth": "Autenticação invalida por favor verificar utilizador e e palavra-passe ",
+      "cannot_connect": "Erro na ligação",
+      "unknown": "Erro Desconhecido!"
+    },
+    "abort": {
+      "already_configured": "Equipamento já se encontra onfigurado"
+    }
+  },
+  "entity": {
+    "button": {
+      "reset_trip_data": {
+        "name": "Repor parcial da viagem"
+      }
+    },
+    "switch": {
+      "lock": {
+        "name": "Bloquear"
+      },
+      "light": {
+        "name": "Luz"
+      }
+    },
+    "sensor": {
+      "assistance_level": {
+        "name": "Assistência"
+      },
+      "atmospheric_pressure": {
+        "name": "Pressão (atmosferica)"
+      },
+      "average_energy_consumption": {
+        "name": "Energia usada (média)"
+      },
+      "average_speed_total": {
+        "name": "Média Total"
+      },
+      "average_speed_trip": {
+        "name": "Média da Viagem"
+      },
+      "battery_soc": {
+        "name": "Batteria"
+      },
+      "battery_health": {
+        "name": "Estado da Bateria"
+      },
+      "battery_temp": {
+        "name": "Temperatura da Bateria"
+      },
+      "bike_speed": {
+        "name": "Velocidade"
+      },
+      "motor_temp": {
+        "name": "Temperatura do Motor"
+      },
+      "power_on_cycles": {
+        "name": "Ciclos de iniciação"
+      },
+      "speed": {
+        "name": "Velocidade"
+      },
+      "total_distance": {
+        "name": "Distância total"
+      },
+      "total_energy_consumption": {
+        "name": "Energia usada (total)"
+      },
+      "total_time": {
+        "name": "Tempo Total"
+      },
+      "trip_distance": {
+        "name": "Distancia da viagem"
+      },
+      "trip_time": {
+        "name": "Tempo da viagem"
+      },
+      "rcvts": {
+        "name": "Última atualização"
+      },
+      "rcvts_pos": {
+        "name": "Última posição"
+      },
+      "timets": {
+        "name": "Data da última atualização"
+      }
+    },
+    "binary_sensor": {
+      "light_on": {
+        "name": "Modo de iluminação"
+      },
+      "lock_flag": {
+        "name": "Bicicleta bloqueada"
+      },
+      "theft_flag": {
+        "name": "Sinalização de Roubo"
+      }
+    }
+  }
+}
