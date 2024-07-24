@@ -9,7 +9,7 @@
 ### JUL 2024 [0.3.3]
 
 - Added Portuguese Language
-- 
+  
 ### JUN 2024 [0.3.2]
 
 - Added trip_reset button
