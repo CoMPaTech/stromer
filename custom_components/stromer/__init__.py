@@ -37,23 +37,35 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Initialize module
     stromer = Stromer(username, password, client_id, client_secret)
 
-    # Set specific bike (instead of all bikes) introduced with morebikes PR
-    try:
-        stromer.bike_id = entry.data["bike_id"]
-        stromer.bike_name = entry.data["nickname"]
-        stromer.bike_model = entry.data["model"]
-    except ApiError as ex:
-        raise ConfigEntryNotReady("Unable to determine configuration data for bike") from ex
-
     # Setup connection to stromer
     try:
         await stromer.stromer_connect()
     except ApiError as ex:
         raise ConfigEntryNotReady("Error while communicating to Stromer API") from ex
 
+    # Remove stale via_device
+    if "via_device" in entry.data:
+        new_data = {k: v for k, v in entry.data.items() if k != "via_device"}
+        hass.config_entries.async_update_entry(entry, data=new_data)
+
+    # Ensure migration from v3 single bike
+    if "bike_id" not in entry.data:
+        bikedata = stromer.stromer_detect()
+        new_data = {**entry.data, "bike_id": bikedata["bikeid"]}
+        hass.config_entries.async_update_entry(entry, data=new_data)
+        new_data = {**entry.data, "nickname": bikedata["nickname"]}
+        hass.config_entries.async_update_entry(entry, data=new_data)
+        new_data = {**entry.data, "model": bikedata["biketype"]}
+        hass.config_entries.async_update_entry(entry, data=new_data)
+
+    # Set specific bike (instead of all bikes) introduced with morebikes PR
+    stromer.bike_id = entry.data["bike_id"]
+    stromer.bike_name = entry.data["nickname"]
+    stromer.bike_model = entry.data["model"]
+
     # Use Bike ID as unique id
-    if entry.unique_id is None:
-        hass.config_entries.async_update_entry(entry, unique_id=stromer.bike_id)
+    if entry.unique_id is None or entry.unique_id == "stromerbike":
+        hass.config_entries.async_update_entry(entry, unique_id=f"stromerbike-{stromer.bike_id}")
 
     # Set up coordinator for fetching data
     coordinator = StromerDataUpdateCoordinator(hass, stromer, SCAN_INTERVAL)  # type: ignore[arg-type]
