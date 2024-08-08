@@ -46,11 +46,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Ensure migration from v3 single bike
     if "bike_id" not in entry.data:
         bikedata = await stromer.stromer_detect()
-        new_data = {**entry.data, "bike_id": bikedata["bikeid"]}
+        new_data = {**entry.data, "bike_id": bikedata[0]["bikeid"]}
         hass.config_entries.async_update_entry(entry, data=new_data)
-        new_data = {**entry.data, "nickname": bikedata["nickname"]}
+        new_data = {**entry.data, "nickname": bikedata[0]["nickname"]}
         hass.config_entries.async_update_entry(entry, data=new_data)
-        new_data = {**entry.data, "model": bikedata["biketype"]}
+        new_data = {**entry.data, "model": bikedata[0]["biketype"]}
         hass.config_entries.async_update_entry(entry, data=new_data)
         await hass.config_entries.async_reload(entry.entry_id)
 
