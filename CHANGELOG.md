@@ -2,13 +2,18 @@
 
 ## Changelog
 
-### Ongoing
+### Ongoing [0.4.0a5]
 
 - Add multibike support (see 0.4 beta progress)
+- Improve support for migration from <= v0.3 (single bike)
+- Remove stale VIA_DEVICE (i.e. the 'Connected to' when viewing the device page)
+- Below-the-surface each bike is now created with a unique id `stromerbike-xxxxx`
+- Multi-bike (proper) selection using config_flow setup
 
 ### JUL 2024 [0.3.3]
 
-- Added Portuguese Language
+- Added Portuguese Language [tnx @ViPeR5000]
+- Other smaller fixes and contributes [tnx @L2v@p]
   
 ### JUN 2024 [0.3.2]
 
