@@ -14,18 +14,19 @@ from homeassistant.exceptions import HomeAssistantError
 from .const import BIKE_DETAILS, CONF_CLIENT_ID, CONF_CLIENT_SECRET, DOMAIN, LOGGER
 from .stromer import Stromer
 
+# TODO: reset to required
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_USERNAME): str,
-        vol.Required(CONF_PASSWORD): str,
-        vol.Required(CONF_CLIENT_ID): str,
+        vol.Optional(CONF_USERNAME): str,
+        vol.Optional(CONF_PASSWORD): str,
+        vol.Optional(CONF_CLIENT_ID): str,
         vol.Optional(CONF_CLIENT_SECRET): str,
     }
 )
 
 
 async def validate_input(_: HomeAssistant, data: dict[str, Any]) -> dict:
-    """Validate the user input allows us to connect."""
+    """Validate the user input allows us to connect by returning a dictionary with all bikes under the account."""
     username = data[CONF_USERNAME]
     password = data[CONF_PASSWORD]
     client_id = data[CONF_CLIENT_ID]
@@ -36,10 +37,10 @@ async def validate_input(_: HomeAssistant, data: dict[str, Any]) -> dict:
     if not await stromer.stromer_connect():
         raise InvalidAuth
 
-    bikes_data = await stromer.stromer_detect()
+    # All bikes information available
+    all_bikes = await stromer.stromer_detect()
 
-    # Return info that you want to store in the config entry.
-    return bikes_data
+    return all_bikes
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, misc]
@@ -53,29 +54,27 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
         """Handle selecting bike step."""
         if user_input is None:
             STEP_BIKE_DATA_SCHEMA = vol.Schema(
-                { vol.Required(BIKE_DETAILS): vol.In(self.bikes), }
+                { vol.Required(BIKE_DETAILS): vol.In(list(self.friendly_names)), }
             )
-            log = f"bikes = {self.bikes}"
-            LOGGER.debug(log)
-            LOGGER.debug("calling show form on bike")
             return self.async_show_form(
                 step_id="bike", data_schema=STEP_BIKE_DATA_SCHEMA
             )
 
-        # log = f"Completed bike selection = {user_input}"
-        # LOGGER.debug(log)
-        bike_data = user_input[BIKE_DETAILS].split(":")
-        self.user_input_data["bike_id"] = bike_data[0]
-        self.user_input_data["nickname"] = bike_data[1]
-        self.user_input_data["model"] = bike_data[2]
-        log = f"Completed bike data = {self.user_input_data}"
+        # Rework user friendly name to actual bike id and details
+        selected_bike = user_input[BIKE_DETAILS]
+        bike_id = self.friendly_names[selected_bike]
+        nickname = self.all_bikes[bike_id]["nickname"]
+        self.user_input_data["bike_id"] = bike_id
+        self.user_input_data["nickname"] = nickname
+        self.user_input_data["model"] = self.all_bikes[bike_id]["biketype"]
 
-        LOGGER.debug("processing")
+        LOGGER.info(f"Using {selected_bike} (i.e. bike ID {bike_id} to talk to the Stromer API")
 
-        await self.async_set_unique_id(f"stromerbike-{self.user_input_data['bike_id']}")
+        await self.async_set_unique_id(f"stromerbike-{bike_id}")
         self._abort_if_unique_id_configured()
 
-        return self.async_create_entry(title=self.user_input_data["nickname"], data=self.user_input_data)
+        LOGGER.info(f"Creating entry using {nickname} as bike device name")
+        return self.async_create_entry(title=nickname, data=self.user_input_data)
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -90,18 +89,26 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
 
         try:
             bikes_data = await validate_input(self.hass, user_input)
-            # Handle single bike as multi-bike
-            self.bikes = []
+            LOGGER.debug(f"bikes_data contains {bikes_data}")
+
+            # Retrieve any bikes available within account
+            # Modify output for better display of selection
+            self.friendly_names = {}
+            self.all_bikes = {}
+            LOGGER.debug("Checking available bikes:")
             for bike in bikes_data:
-               self.bikes.append(f"{bike['bikeid']}:{bike['nickname']}:{bike['biketype']}")
+               LOGGER.debug(f"* this bike contains {bike}")
+               bike_id = bike["bikeid"]
+               nickname = bike["nickname"]
+               biketype = bike["biketype"]
+
+               friendly_name = f"{nickname} ({biketype}) #{bike_id}"
+
+               self.friendly_names[friendly_name] = bike_id
+               self.all_bikes[bike_id]= { "nickname": nickname, "biketype": biketype}
 
             # Save account info
             self.user_input_data = user_input
-            # log = f"User input: {user_input}"
-            # LOGGER.debug(log)
-            log = f"Bikes: {self.bikes}"
-            LOGGER.debug(log)
-            # Display available bikes
             return await self.async_step_bike()
 
         except CannotConnect:

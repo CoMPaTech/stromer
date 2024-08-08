@@ -26,6 +26,7 @@ PLATFORMS: list[Platform] = [
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Stromer from a config entry."""
     hass.data.setdefault(DOMAIN, {})
+    LOGGER.debug(f"Stromer entry: {entry}")
 
     # Fetch configuration data from config_flow
     username = entry.data[CONF_USERNAME]
@@ -33,17 +34,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     client_id = entry.data[CONF_CLIENT_ID]
     client_secret = entry.data.get(CONF_CLIENT_SECRET, None)
 
-    # Initialize connection to stromer
+    # Initialize module
     stromer = Stromer(username, password, client_id, client_secret)
+
+    # Set specific bike (instead of all bikes) introduced with morebikes PR
     try:
         stromer.bike_id = entry.data["bike_id"]
         stromer.bike_name = entry.data["nickname"]
         stromer.bike_model = entry.data["model"]
+    except ApiError as ex:
+        raise ConfigEntryNotReady("Unable to determine configuration data for bike") from ex
+
+    # Setup connection to stromer
+    try:
         await stromer.stromer_connect()
     except ApiError as ex:
         raise ConfigEntryNotReady("Error while communicating to Stromer API") from ex
-
-    LOGGER.debug(f"Stromer entry: {entry}")
 
     # Use Bike ID as unique id
     if entry.unique_id is None:
