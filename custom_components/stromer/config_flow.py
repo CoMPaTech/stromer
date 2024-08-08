@@ -14,12 +14,11 @@ from homeassistant.exceptions import HomeAssistantError
 from .const import BIKE_DETAILS, CONF_CLIENT_ID, CONF_CLIENT_SECRET, DOMAIN, LOGGER
 from .stromer import Stromer
 
-# TODO: reset to required
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
-        vol.Optional(CONF_USERNAME): str,
-        vol.Optional(CONF_PASSWORD): str,
-        vol.Optional(CONF_CLIENT_ID): str,
+        vol.Required(CONF_USERNAME): str,
+        vol.Required(CONF_PASSWORD): str,
+        vol.Required(CONF_CLIENT_ID): str,
         vol.Optional(CONF_CLIENT_SECRET): str,
     }
 )
