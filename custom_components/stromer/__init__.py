@@ -57,6 +57,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.config_entries.async_update_entry(entry, data=new_data)
         new_data = {**entry.data, "model": bikedata["biketype"]}
         hass.config_entries.async_update_entry(entry, data=new_data)
+        await hass.config_entries.async_reload(entry.entry_id)
 
     # Set specific bike (instead of all bikes) introduced with morebikes PR
     stromer.bike_id = entry.data["bike_id"]
@@ -66,6 +67,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Use Bike ID as unique id
     if entry.unique_id is None or entry.unique_id == "stromerbike":
         hass.config_entries.async_update_entry(entry, unique_id=f"stromerbike-{stromer.bike_id}")
+        await hass.config_entries.async_reload(entry.entry_id)
 
     # Set up coordinator for fetching data
     coordinator = StromerDataUpdateCoordinator(hass, stromer, SCAN_INTERVAL)  # type: ignore[arg-type]
