@@ -43,11 +43,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     except ApiError as ex:
         raise ConfigEntryNotReady("Error while communicating to Stromer API") from ex
 
-    # Remove stale via_device
-    if "via_device" in entry.data:
-        new_data = {k: v for k, v in entry.data.items() if k != "via_device"}
-        hass.config_entries.async_update_entry(entry, data=new_data)
-
     # Ensure migration from v3 single bike
     if "bike_id" not in entry.data:
         bikedata = stromer.stromer_detect()
@@ -67,7 +62,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Use Bike ID as unique id
     if entry.unique_id is None or entry.unique_id == "stromerbike":
         hass.config_entries.async_update_entry(entry, unique_id=f"stromerbike-{stromer.bike_id}")
-        await hass.config_entries.async_reload(entry.entry_id)
 
     # Set up coordinator for fetching data
     coordinator = StromerDataUpdateCoordinator(hass, stromer, SCAN_INTERVAL)  # type: ignore[arg-type]
@@ -85,6 +79,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         name=f"{stromer.bike_name}",
         model=f"{stromer.bike_model}",
     )
+
+    # Remove stale via_device
+    device = device_registry.async_get_device(
+        identifiers={(DOMAIN, entry.entry_id)}
+    )
+
+    if device and "via_device" in device.via_device_id:
+        device_registry.async_update_device(
+            device.id,
+            via_device_id=None
+        )
 
     # Set up platforms (i.e. sensors, binary_sensors)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

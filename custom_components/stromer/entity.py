@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from homeassistant.const import ATTR_NAME
+from homeassistant.const import ATTR_NAME, ATTR_VIA_DEVICE
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -35,20 +35,12 @@ class StromerEntity(CoordinatorEntity[StromerData]):  # type:ignore [misc]
             name=data.get("nickname"),
             sw_version=data.get("suiversion"),
             hw_version=data.get("tntversion"),
-            #            stromer_id=data.get("bike_id"),
-            #            type=data.get("bikemodel"),
-            #            frame_color=data.get("color"),
-            #            frame_size=data.get("size"),
-            #            hardware=data.get("hardware"),
         )
 
         self._attr_device_info.update(
             {
                 ATTR_NAME: data.get("nickname"),
-#                ATTR_VIA_DEVICE: (
-#                    DOMAIN,
-#                    str(self.coordinator.data.bike_id),
-#                ),
+                ATTR_VIA_DEVICE: None,
             }
         )
 
