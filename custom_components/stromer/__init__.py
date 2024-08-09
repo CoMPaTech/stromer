@@ -76,14 +76,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, str(stromer.bike_id))},
         manufacturer="Stromer",
-        name=f"{stromer.bike_name}",
-        model=f"{stromer.bike_model}",
+        name=stromer.bike_name,
+        model=stromer.bike_model,
     )
 
     # Remove non-existing via device
     device_registry.async_update_device(
         device.id,
-        via_device_id=None
+        name=stromer.bike_name,
+        model=stromer.bike_model,
+        via_device_id=None,
     )
 
     # Set up platforms (i.e. sensors, binary_sensors)
