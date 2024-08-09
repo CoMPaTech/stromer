@@ -46,13 +46,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Ensure migration from v3 single bike
     if "bike_id" not in entry.data:
         bikedata = await stromer.stromer_detect()
-        new_data = {**entry.data, "bike_id": bikedata[0]["bikeid"]}
+        new_data = {
+            **entry.data,
+            "bike_id": bikedata[0]["bikeid"],
+            "nickname": bikedata[0]["nickname"],
+            "model": bikedata[0]["biketype"]
+        }
         hass.config_entries.async_update_entry(entry, data=new_data)
-        new_data = {**entry.data, "nickname": bikedata[0]["nickname"]}
-        hass.config_entries.async_update_entry(entry, data=new_data)
-        new_data = {**entry.data, "model": bikedata[0]["biketype"]}
-        hass.config_entries.async_update_entry(entry, data=new_data)
-        await hass.config_entries.async_reload(entry.entry_id)
 
     # Set specific bike (instead of all bikes) introduced with morebikes PR
     stromer.bike_id = entry.data["bike_id"]
@@ -72,7 +72,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # Add bike to the HA device registry
     device_registry = dr.async_get(hass)
-    device_registry.async_get_or_create(
+    device = device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, str(stromer.bike_id))},
         manufacturer="Stromer",
@@ -80,16 +80,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         model=f"{stromer.bike_model}",
     )
 
-    # Remove stale via_device
-    device = device_registry.async_get_device(
-        identifiers={(DOMAIN, entry.entry_id)}
+    # Remove non-existing via device
+    device_registry.async_update_device(
+        device.id,
+        via_device_id=None
     )
-
-    if device and "via_device" in device.via_device_id:
-        device_registry.async_update_device(
-            device.id,
-            via_device_id=None
-        )
 
     # Set up platforms (i.e. sensors, binary_sensors)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
