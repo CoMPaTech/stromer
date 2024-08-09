@@ -26,6 +26,7 @@ PLATFORMS: list[Platform] = [
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Stromer from a config entry."""
     hass.data.setdefault(DOMAIN, {})
+    LOGGER.debug(f"Stromer entry: {entry}")
 
     # Fetch configuration data from config_flow
     username = entry.data[CONF_USERNAME]
@@ -33,18 +34,34 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     client_id = entry.data[CONF_CLIENT_ID]
     client_secret = entry.data.get(CONF_CLIENT_SECRET, None)
 
-    # Initialize connection to stromer
+    # Initialize module
     stromer = Stromer(username, password, client_id, client_secret)
+
+    # Setup connection to stromer
     try:
         await stromer.stromer_connect()
     except ApiError as ex:
         raise ConfigEntryNotReady("Error while communicating to Stromer API") from ex
 
-    LOGGER.debug(f"Stromer entry: {entry}")
+    # Ensure migration from v3 single bike
+    if "bike_id" not in entry.data:
+        bikedata = await stromer.stromer_detect()
+        new_data = {
+            **entry.data,
+            "bike_id": bikedata[0]["bikeid"],
+            "nickname": bikedata[0]["nickname"],
+            "model": bikedata[0]["biketype"]
+        }
+        hass.config_entries.async_update_entry(entry, data=new_data)
+
+    # Set specific bike (instead of all bikes) introduced with morebikes PR
+    stromer.bike_id = entry.data["bike_id"]
+    stromer.bike_name = entry.data["nickname"]
+    stromer.bike_model = entry.data["model"]
 
     # Use Bike ID as unique id
-    if entry.unique_id is None:
-        hass.config_entries.async_update_entry(entry, unique_id=stromer.bike_id)
+    if entry.unique_id is None or entry.unique_id == "stromerbike":
+        hass.config_entries.async_update_entry(entry, unique_id=f"stromerbike-{stromer.bike_id}")
 
     # Set up coordinator for fetching data
     coordinator = StromerDataUpdateCoordinator(hass, stromer, SCAN_INTERVAL)  # type: ignore[arg-type]
@@ -55,12 +72,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # Add bike to the HA device registry
     device_registry = dr.async_get(hass)
-    device_registry.async_get_or_create(
+    device = device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, str(stromer.bike_id))},
         manufacturer="Stromer",
-        name=f"{stromer.bike_name}",
-        model=f"{stromer.bike_model}",
+        name=stromer.bike_name,
+        model=stromer.bike_model,
+    )
+
+    # Remove non-existing via device
+    device_registry.async_update_device(
+        device.id,
+        name=stromer.bike_name,
+        model=stromer.bike_model,
+        via_device_id=None,
     )
 
     # Set up platforms (i.e. sensors, binary_sensors)

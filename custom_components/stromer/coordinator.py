@@ -35,6 +35,7 @@ class StromerDataUpdateCoordinator(DataUpdateCoordinator[StromerData]):  # type:
                 self.stromer.position["rcvts_pos"] = self.stromer.position.pop("rcvts")
 
             bike_data = self.stromer.bike
+            bike_data.update({"bike_model": self.stromer.bike_model, "bike_name": self.stromer.bike_name})
             bike_data.update(self.stromer.status)
             bike_data.update(self.stromer.position)
 

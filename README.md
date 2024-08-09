@@ -42,6 +42,8 @@ The light-switch is called 'Light mode' as depending on your bike type it will s
 
 **BETA** As with the `switch` implementation a `button` is added to reset your trip_data.
 
+**ALPHA** Multi-bike support (see #81 / #82 for details and progress). Currently seems working with a few glitches (v0.4.0a2), hoping to provide more stability (and migration from v0.3) (v0.4.0a4 and upwards). Basically the config-flow will now detect if you have one or multiple bikes. If you have one, you can only select it (obviously). When multiple bikes are in the same account repeat the 'add integration' for each bike, selecting the other bike(s) on each iteration.
+
 ## If you want more frequent updates
 
 Basically you'll have to trigger (through automations) the updates yourself. But it's the correct way to learn Home Assistant and the method shown below also saves some API calls to Stromer. Basically this will determine if the bike is **unlocked** and if so start frequent updates. The example will also show you how to add a button to immediately start the more frequent updates. And yes, I'm aware we can make blueprints of this, but I'll leave that for now until we have a broader user base and properly tested integration.

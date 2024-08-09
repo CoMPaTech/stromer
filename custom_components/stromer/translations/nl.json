@@ -8,7 +8,7 @@
           "password": "Wachtwoord",
           "username": "Gebruikersnaam",
           "client_id": "Client ID",
-          "client_secret": "Client Secret (optioneel, niet nodig als je client id met 4P begint"
+          "client_secret": "Client Secret (optioneel, niet nodig als je client id met 4P begint)"
         }
       }
     },

@@ -31,24 +31,16 @@ class StromerEntity(CoordinatorEntity[StromerData]):  # type:ignore [misc]
             configuration_url=configuration_url,
             identifiers={(DOMAIN, str(coordinator.data.bike_id))},
             manufacturer="Stromer",
-            model=data.get("bikemodel"),
-            name=data.get("nickname"),
+            model=data.get("bike_model"),
+            name=data.get("bike_name"),
             sw_version=data.get("suiversion"),
             hw_version=data.get("tntversion"),
-            #            stromer_id=data.get("bike_id"),
-            #            type=data.get("bikemodel"),
-            #            frame_color=data.get("color"),
-            #            frame_size=data.get("size"),
-            #            hardware=data.get("hardware"),
         )
 
         self._attr_device_info.update(
             {
-                ATTR_NAME: data.get("nickname"),
-                ATTR_VIA_DEVICE: (
-                    DOMAIN,
-                    str(self.coordinator.data.bike_id),
-                ),
+                ATTR_NAME: data.get("bike_name"),
+                ATTR_VIA_DEVICE: None,
             }
         )
 

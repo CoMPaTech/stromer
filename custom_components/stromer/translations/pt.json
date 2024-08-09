@@ -8,7 +8,7 @@
           "password": "Palavra-passe",
           "username": "Utilizador",
           "client_id": "Identificador de cliente",
-          "client_secret": "Segredo de cliente  (opcional não necessário caso o teu cliente começe por 4P"
+          "client_secret": "Segredo de cliente  (opcional não necessário caso o teu cliente começe por 4P)"
         }
       }
     },
