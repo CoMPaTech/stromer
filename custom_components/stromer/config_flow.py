@@ -31,10 +31,12 @@ async def validate_input(_: HomeAssistant, data: dict[str, Any]) -> dict:
     client_id = data[CONF_CLIENT_ID]
     client_secret = data.get(CONF_CLIENT_SECRET, None)
 
-    # Initialize connection to stromer
+    # Initialize connection to stromer to validate credentials
     stromer = Stromer(username, password, client_id, client_secret)
     if not await stromer.stromer_connect():
         raise InvalidAuth
+    LOGGER.debug("Credentials validated successfully")
+    await stromer.stromer_disconnect()
 
     # All bikes information available
     all_bikes = await stromer.stromer_detect()
