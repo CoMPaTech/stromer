@@ -67,7 +67,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
         self.user_input_data["nickname"] = nickname
         self.user_input_data["model"] = self.all_bikes[bike_id]["biketype"]
 
-        LOGGER.info(f"Using {selected_bike} (i.e. bike ID {bike_id} to talk to the Stromer API")
+        LOGGER.info(f"Using {selected_bike} (i.e. bike ID {bike_id}) to talk to the Stromer API")
 
         await self.async_set_unique_id(f"stromerbike-{bike_id}")
         self._abort_if_unique_id_configured()
