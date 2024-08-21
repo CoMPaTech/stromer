@@ -31,10 +31,12 @@ async def validate_input(_: HomeAssistant, data: dict[str, Any]) -> dict:
     client_id = data[CONF_CLIENT_ID]
     client_secret = data.get(CONF_CLIENT_SECRET, None)
 
-    # Initialize connection to stromer
+    # Initialize connection to stromer to validate credentials
     stromer = Stromer(username, password, client_id, client_secret)
     if not await stromer.stromer_connect():
         raise InvalidAuth
+    LOGGER.debug("Credentials validated successfully")
+    await stromer.stromer_disconnect()
 
     # All bikes information available
     all_bikes = await stromer.stromer_detect()
@@ -67,7 +69,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
         self.user_input_data["nickname"] = nickname
         self.user_input_data["model"] = self.all_bikes[bike_id]["biketype"]
 
-        LOGGER.info(f"Using {selected_bike} (i.e. bike ID {bike_id} to talk to the Stromer API")
+        LOGGER.info(f"Using {selected_bike} (i.e. bike ID {bike_id}) to talk to the Stromer API")
 
         await self.async_set_unique_id(f"stromerbike-{bike_id}")
         self._abort_if_unique_id_configured()

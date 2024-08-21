@@ -27,6 +27,8 @@ class Stromer:
             self._api_version = "v3"
         self.base_url: str = "https://api3.stromer-portal.ch"
 
+        LOGGER.debug("Initializing Stromer with API version %s", self._api_version)
+
         self._timeout: int = timeout
         self._username: str = username
         self._password: str = password
@@ -43,6 +45,7 @@ class Stromer:
 
     async def stromer_connect(self) -> dict:
         """Connect to stromer API."""
+        LOGGER.debug("Creating aiohttp session")
         aio_timeout = aiohttp.ClientTimeout(total=self._timeout)
         self._websession = aiohttp.ClientSession(timeout=aio_timeout)
 
@@ -55,6 +58,11 @@ class Stromer:
         LOGGER.debug("Stromer connected!")
 
         return True
+
+    async def stromer_disconnect(self) -> None:
+        """Close API web session."""
+        LOGGER.debug("Closing aiohttp session")
+        await self._websession.close()
 
     async def stromer_detect(self) -> dict:
         """Get full data (to determine bike(s))."""
