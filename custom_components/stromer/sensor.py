@@ -210,26 +210,13 @@ class StromerSensor(StromerEntity, SensorEntity):  # type: ignore[misc]
         self.entity_description = description
         self._attr_unique_id = f"{device_id}-{description.key}"
 
-    @staticmethod
-    def _ensure_timezone(timestamp: datetime | None) -> datetime | None:
-        """Calculate days left until domain expires."""
-        if timestamp is None:
-            return None
-
-        # If timezone info isn't provided by the Whois, assume UTC.
-        if timestamp.tzinfo is None:
-            return timestamp.replace(tzinfo=UTC)
-
-        return timestamp
-
     @property
     def native_value(self) -> Any:
         """Return the state of the sensor."""
         if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
-            return self._ensure_timezone(
-                datetime.fromtimestamp(
-                    int(self._coordinator.data.bikedata.get(self._ent))
-                )
+            return datetime.fromtimestamp(
+                int(self._coordinator.data.bikedata.get(self._ent)),
+                tz=UTC,
             )
 
         return self._coordinator.data.bikedata.get(self._ent)
