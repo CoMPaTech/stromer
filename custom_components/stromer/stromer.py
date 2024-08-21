@@ -71,6 +71,7 @@ class Stromer:
         except Exception as e:
             log = f"Stromer unable to fetch full data: {e}"
             LOGGER.error(log)
+            raise ApiError from e
 
         log = f"Stromer full_data : {self.full_data}"
         LOGGER.debug(log)
