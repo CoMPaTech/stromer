@@ -3,7 +3,7 @@
 "Bug Reports" = "https://github.com/compatech/stromer/issues"
 
 [tool.black]
-target-version = ["py312", "py311"]
+target-version = ["py312"]
 exclude = 'generated'
 
 [tool.ruff]
