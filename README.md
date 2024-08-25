@@ -42,7 +42,7 @@ The light-switch is called 'Light mode' as depending on your bike type it will s
 
 As with the `switch` implementation a `button` is added to reset your trip_data.
 
-Multi-bike support (see #81 / #82 for details and progress). The config-flow will now detect if you have one or multiple bikes. If you have one, you can only select it (obviously). When multiple bikes are in the same account repeat the 'add integration' for each bike, selecting the other bike(s) on each iteration.
+Multi-bike support (see #81 / #82 for details and progress). The config-flow will now detect if you have one or multiple bikes. If you have one, you can only select it (obviously). When multiple bikes are in the same account, repeat the 'add integration' for each bike, selecting the other bike(s) on each iteration.
 
 ## If you want more frequent updates
 
