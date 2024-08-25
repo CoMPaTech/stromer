@@ -214,8 +214,11 @@ class StromerSensor(StromerEntity, SensorEntity):  # type: ignore[misc]
     def native_value(self) -> Any:
         """Return the state of the sensor."""
         if self.entity_description.device_class == SensorDeviceClass.TIMESTAMP:
+            timestamp = self._coordinator.data.bikedata.get(self._ent)
+            if timestamp is None:
+                return None
             return datetime.fromtimestamp(
-                int(self._coordinator.data.bikedata.get(self._ent)),
+                int(timestamp),
                 tz=UTC,
             )
 
