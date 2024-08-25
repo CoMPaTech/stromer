@@ -43,7 +43,7 @@ class Stromer:
         self.bike_name: str | None = None
         self.bike_model: str | None = None
 
-    async def stromer_connect(self) -> dict:
+    async def stromer_connect(self) -> bool:
         """Connect to stromer API."""
         LOGGER.debug("Creating aiohttp session")
         aio_timeout = aiohttp.ClientTimeout(total=self._timeout)
