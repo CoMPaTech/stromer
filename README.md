@@ -35,14 +35,14 @@ Additional the setup flow will ask you for your username (i.e. e-mail address) a
 
 In the current state it retrieves `bike`, `status` and `position` from the API every 10 minutes.
 
-**BETA** There is an early implementation on toggling data on your bike, `light` and `lock` can be adjusted.
+There is an early implementation on toggling data on your bike, `light` and `lock` can be adjusted.
 Do note that the switches do not immediately reflect the status (i.e. they will when you toggle them, but switch back quickly).
 After your 'switch' command we do request an API update to check on the status, pending that update the switch might toggle back-n-forth some time.
 The light-switch is called 'Light mode' as depending on your bike type it will switch on/off or between 'dim and bright'.
 
-**BETA** As with the `switch` implementation a `button` is added to reset your trip_data.
+As with the `switch` implementation a `button` is added to reset your trip_data.
 
-**ALPHA** Multi-bike support (see #81 / #82 for details and progress). Currently seems working with a few glitches (v0.4.0a2), hoping to provide more stability (and migration from v0.3) (v0.4.0a4 and upwards). Basically the config-flow will now detect if you have one or multiple bikes. If you have one, you can only select it (obviously). When multiple bikes are in the same account repeat the 'add integration' for each bike, selecting the other bike(s) on each iteration.
+Multi-bike support (see #81 / #82 for details and progress). The config-flow will now detect if you have one or multiple bikes. If you have one, you can only select it (obviously). When multiple bikes are in the same account repeat the 'add integration' for each bike, selecting the other bike(s) on each iteration.
 
 ## If you want more frequent updates
 
@@ -134,7 +134,7 @@ icon: mdi:bike
 show_state: false
 ```
 
-## State: ALPHA
+## State: BETA
 
 Even though available does not mean it's stable yet, the HA part is solid but the class used to interact with the API is in need of improvement (e.g. better overall handling). This might also warrant having the class available as a module from pypi.
 
