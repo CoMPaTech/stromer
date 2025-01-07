@@ -1,20 +1,32 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base", ":dependencyDashboard", "schedule:weekly"],
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    "schedule:weekly"
+  ],
   "pre-commit": {
     "enabled": true
   },
   "packageRules": [
     {
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "automerge": true
     },
     {
-      "matchManagers": ["pip_requirements", "poetry", "setup-cfg"],
+      "matchManagers": [
+        "pip_requirements",
+        "poetry",
+        "setup-cfg"
+      ],
       "automerge": true
     },
     {
-      "matchManagers": ["pre-commit"],
+      "matchManagers": [
+        "pre-commit"
+      ],
       "automerge": true
     }
   ]
