@@ -11,7 +11,7 @@ default_language_version:
 repos:
   # Run manually in CI skipping the branch checks
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.4
+    rev: v0.9.5
     hooks:
       - id: ruff
         name: "Ruff-ing code"
