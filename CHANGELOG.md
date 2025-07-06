@@ -2,6 +2,14 @@
 
 ## Changelog
 
+### JUL 2025 [0.4.2]
+
+- Attempt to fix getting initial code (due to DNS issues) #139
+
+### SEP 2024 [0.4.1]
+
+- Onboarding devices fix
+
 ### AUG 2024 [0.4.0]
 
 - Add multibike support

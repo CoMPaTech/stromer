@@ -2,12 +2,14 @@
 
 __version__ = "0.2.0"
 
+import asyncio
 import json
 import logging
 import re
 from typing import Any
 from urllib.parse import urlencode
 
+import aiodns
 import aiohttp
 
 LOGGER = logging.getLogger(__name__)
@@ -109,12 +111,33 @@ class Stromer:
         LOGGER.error("Stromer error: api call failed 10 times, cowardly failing")
         raise ApiError
 
+    async def stromer_api_debouncer(self, url: str, timeout: int = 10, retries: int = 10, delay: int = 10) -> aiohttp.ClientResponse:
+        """Debounce API-request to leverage DNS issues."""
+        for attempt in range(retries):
+            try:
+                log = f"Attempt {attempt + 1}/{retries} to interface with Stromer on {url}"
+                LOGGER.debug(log)
+                res = await self._websession.get(url, timeout=timeout)
+                res.raise_for_status()
+                return res
+            except (aiodns.error.DNSError, aiohttp.ClientError, TimeoutError) as e:
+                log = f"Error getting Stromer API (attempt {attempt + 1}/{retries}): {e}"
+                LOGGER.warning(log)
+                if attempt < retries - 1:
+                    log = f"Retrying in {delay} seconds..."
+                    LOGGER.warning(log)
+                    await asyncio.sleep(delay)
+                else:
+                    log = f"Failed to get to Stromer API after {retries} attempts."
+                    LOGGER.error(log)
+                    raise  # Re-raise the last exception if all retries fail
+
     async def stromer_get_code(self) -> None:
         """Retrieve authorization code from API."""
         url = f"{self.base_url}/mobile/v4/login/"
         if self._api_version == "v3":
             url = f"{self.base_url}/users/login/"
-        res = await self._websession.get(url)
+        res = await self.stromer_api_debouncer(url)
         try:
             cookie = res.headers.get("Set-Cookie")
             pattern = "=(.*?);"
