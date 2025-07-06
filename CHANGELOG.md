@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### JUL 2025 [0.4.1]
+
+- Attempt to fix getting initial code (due to DNS issues)
+
 ### AUG 2024 [0.4.0]
 
 - Add multibike support
