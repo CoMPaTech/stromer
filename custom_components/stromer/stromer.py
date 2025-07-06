@@ -111,13 +111,13 @@ class Stromer:
         LOGGER.error("Stromer error: api call failed 10 times, cowardly failing")
         raise ApiError
 
-    async def stromer_api_debouncer(self, url, timeout: int = 10, retries: int = 10, delay: int = 10):
-        """Debounce API-request to leverage DNS issues.."""
+    async def stromer_api_debouncer(self, url: str, timeout: int = 10, retries: int = 10, delay: int = 10) -> aiohttp.ClientResponse:
+        """Debounce API-request to leverage DNS issues."""
         for attempt in range(retries):
             try:
                 log = f"Attempt {attempt + 1}/{retries} to interface with Stromer on {url}"
                 LOGGER.debug(log)
-                res = await self._websession.get(url, timeout)
+                res = await self._websession.get(url, timeout=timeout)
                 res.raise_for_status()
                 return res
             except (aiodns.error.DNSError, aiohttp.ClientError, TimeoutError) as e:
