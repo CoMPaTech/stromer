@@ -170,9 +170,16 @@ class Stromer:
             url, data=data, headers={"Referer": url}, allow_redirects=False
         )
         next_loc = res.headers.get("Location")
+        LOGGER.error("DEBUG location result %s", await res.text())
+        LOGGER.error("DEBUG determined next location: %s", next_loc)
+
         next_url = f"{self.base_url}{next_loc}"
+        LOGGER.error("DEBUG next url: %s", next_url)
+
         res = await self._websession.get(next_url, allow_redirects=False)
         self._code = res.headers.get("Location")
+        LOGGER.error("DEBUG code result %s", await res.text())
+        LOGGER.error("DEBUG code determined: %s", self._code)
         self._code = self._code.split("=")[1]  # type: ignore[union-attr]
 
     async def stromer_get_access_token(self) -> None:
