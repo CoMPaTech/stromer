@@ -170,6 +170,18 @@ class Stromer:
             url, data=data, headers={"Referer": url}, allow_redirects=False
         )
         next_loc = res.headers.get("Location")
+        if not next_loc:
+            LOGGER.error("No next location returned from Stromer API. Full response details:")
+            LOGGER.error("  **DONT DOX BY SHARING** Full Request-Data: %s", data)
+            LOGGER.error("  **SHARE RESPONSIBLY ** Full Partial-Data: %s", data["next"])
+            LOGGER.error("  Status: %s", res.status)
+            LOGGER.error("  Headers: %s", dict(res.headers))
+            try:
+                body_text = await res.text()
+                LOGGER.error("  Body: %s", body_text)
+            except Exception as err:
+                raise NextLocationError("Unable to provide body information from Stromer API") from err
+            raise NextLocationError("No next location returned from Stromer API") from None
 
         next_url = f"{self.base_url}{next_loc}"
         if not (next_loc.startswith("/") or next_loc.startswith("?")):
