@@ -170,7 +170,23 @@ class Stromer:
             url, data=data, headers={"Referer": url}, allow_redirects=False
         )
         next_loc = res.headers.get("Location")
+        if not next_loc:
+            LOGGER.debug("No next location returned from Stromer API. Full response details:")
+            LOGGER.debug("  **DONT DOX BY SHARING** Full Request-Data: %s", data)
+            LOGGER.debug("  **SHARE RESPONSIBLY ** Full Partial-Data: %s", data["next"])
+            LOGGER.debug("  Status: %s", res.status)
+            LOGGER.debug("  Headers: %s", dict(res.headers))
+            try:
+                body_text = await res.text()
+                LOGGER.debug("  Body: %s", body_text)
+            except Exception as err:
+                raise NextLocationError("Unable to provide body information from Stromer API") from err
+            raise NextLocationError("No next location returned from Stromer API") from None
+
         next_url = f"{self.base_url}{next_loc}"
+        if not (next_loc.startswith("/") or next_loc.startswith("?")):
+            raise NextLocationError(f"Invalid next location: '{next_loc}'. Expected start with '/' or '?'.")
+
         res = await self._websession.get(next_url, allow_redirects=False)
         self._code = res.headers.get("Location")
         self._code = self._code.split("=")[1]  # type: ignore[union-attr]
@@ -258,3 +274,6 @@ class Stromer:
 
 class ApiError(Exception):
     """Error to indicate something wrong with the API."""
+
+class NextLocationError(Exception):
+    """Error to indicate something wrong returned in next location."""

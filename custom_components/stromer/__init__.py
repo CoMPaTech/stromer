@@ -10,7 +10,7 @@ from homeassistant.helpers import device_registry as dr
 
 from .const import CONF_CLIENT_ID, CONF_CLIENT_SECRET, DOMAIN, LOGGER
 from .coordinator import StromerDataUpdateCoordinator
-from .stromer import ApiError, Stromer
+from .stromer import ApiError, NextLocationError, Stromer
 
 SCAN_INTERVAL = timedelta(minutes=10)
 
@@ -42,6 +42,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await stromer.stromer_connect()
     except ApiError as ex:
         raise ConfigEntryNotReady("Error while communicating to Stromer API") from ex
+    except NextLocationError as ex:
+        raise ConfigEntryNotReady("Error while getting authentication location %s", ex) from ex
 
     # Ensure migration from v3 single bike
     if "bike_id" not in entry.data:

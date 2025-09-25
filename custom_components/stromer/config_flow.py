@@ -12,7 +12,7 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import BIKE_DETAILS, CONF_CLIENT_ID, CONF_CLIENT_SECRET, DOMAIN, LOGGER
-from .stromer import Stromer
+from .stromer import ApiError, NextLocationError, Stromer
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
@@ -32,9 +32,17 @@ async def validate_input(_: HomeAssistant, data: dict[str, Any]) -> dict:
     client_secret = data.get(CONF_CLIENT_SECRET, None)
 
     # Initialize connection to stromer to validate credentials
-    stromer = Stromer(username, password, client_id, client_secret)
-    if not await stromer.stromer_connect():
+    try:
+        stromer = Stromer(username, password, client_id, client_secret)
+        connected: bool = await stromer.stromer_connect()
+    except ApiError as ex:
+        raise CannotConnect("Error while connecting to Stromer API %s", ex) from ex
+    except NextLocationError as ex:
+        raise CannotConnect("Error while getting authentication location %s", ex) from ex
+
+    if not connected:
         raise InvalidAuth
+
     LOGGER.debug("Credentials validated successfully")
 
     # All bikes information available

@@ -6,7 +6,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import DOMAIN, LOGGER
-from .stromer import ApiError, Stromer
+from .stromer import ApiError, NextLocationError, Stromer
 
 
 class StromerData(NamedTuple):
@@ -42,8 +42,10 @@ class StromerDataUpdateCoordinator(DataUpdateCoordinator[StromerData]):  # type:
             data = [bike_data, self.stromer.bike_id, self.stromer.bike_name]
             LOGGER.debug("Stromer data %s updated", data)
 
-        except ApiError as err:
-            raise UpdateFailed(f"Error communicating with API: {err}") from err
-        except Exception as err:
-            raise ConfigEntryAuthFailed from err
+        except ApiError as ex:
+            raise UpdateFailed(f"Error communicating with API: {ex}") from ex
+        except NextLocationError as ex:
+            raise UpdateFailed("Error while getting authentication location %s", ex) from ex
+        except Exception as ex:
+            raise ConfigEntryAuthFailed from ex
         return StromerData(*data)  # type: ignore [arg-type]
