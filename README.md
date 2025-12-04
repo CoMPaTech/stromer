@@ -1,6 +1,8 @@
 # Stromer Custom Component for Home Assistant
 
-**:warning::warning::warning:Read the [release notes](https://github.com/CoMPaTech/stromer/releases) before upgrading, in case there are BREAKING changes!:warning::warning::warning:**
+> Looking for Homey instead of Home Assistant and/or if you need more detailed information on how to get your credentials, @wdool created [Stromer for Homey](https://github.com/wdool/stromer_homey) using information in this repo but has extensive information on how to connect. Very nice that Homey users can now also track and automated their favorite bike(s).
+
+**:warning::warning::warning: Read the [release notes](https://github.com/CoMPaTech/stromer/releases) before upgrading, in case there are BREAKING changes! :warning::warning::warning:**
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/CoMPaTech/stomer/)
 [![CodeFactor](https://www.codefactor.io/repository/github/CoMPaTech/stromer/badge)](https://www.codefactor.io/repository/github/CoMPaTech/stromer)
