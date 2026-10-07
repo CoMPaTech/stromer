@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from homeassistant.const import ATTR_NAME, ATTR_VIA_DEVICE
+from homeassistant.const import ATTR_NAME
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -40,7 +40,6 @@ class StromerEntity(CoordinatorEntity[StromerData]):  # type:ignore [misc]
         self._attr_device_info.update(
             {
                 ATTR_NAME: data.get("bike_name"),
-                ATTR_VIA_DEVICE: None,
             }
         )
 
