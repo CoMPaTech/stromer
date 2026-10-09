@@ -56,7 +56,7 @@
         "name": "Battery"
       },
       "battery_health": {
-        "name": "Battery Condition"
+        "name": "Battery health"
       },
       "battery_temp": {
         "name": "Battery Temperature"
