@@ -96,7 +96,7 @@ action:
 mode: single
 ```
 
-- And the final one, actually calling the updates (example every 30 seconds). We'll only point to speed, but it will update the other sensors
+- And the final one, actually calling the updates (example every 30 seconds). We'll only point to bike speed, but it will update the other sensors
 
 ```automation.yml
 alias: Stromer update sensors
@@ -112,11 +112,11 @@ action:
   - service: homeassistant.update_entity
     data: {}
     target:
-      entity_id: sensor.stromer_speed
+      entity_id: sensor.stromer_bike_speed
 mode: single
 ```
 
-- Final step is adding a button to your dashboard if you want to trigger updates right now. Do note that your bike must be **unlocked** before triggering, otherwise it will 'cancel itself' :) In a dashboard, click the three buttons right top, and add a `button`-card, through `view code editor` paste, switch back to visual editor and customize the below to your taste. Again pointing at speed but it will refresh if the bike is unlocked and trigger the updates helper.
+- Final step is adding a button to your dashboard if you want to trigger updates right now. Do note that your bike must be **unlocked** before triggering, otherwise it will 'cancel itself' :) In a dashboard, click the three buttons right top, and add a `button`-card, through `view code editor` paste, switch back to visual editor and customize the below to your taste. Again pointing at bike speed but it will refresh if the bike is unlocked and trigger the updates helper.
 
 ```lovelace.yml
 show_name: true
@@ -127,7 +127,7 @@ tap_action:
   service: homeassistant.update_entity
   service_data: {}
   target:
-    entity_id: sensor.stromer_speed
+    entity_id: sensor.stromer_bike_speed
 entity: ''
 hold_action:
   action: none
@@ -146,6 +146,7 @@ Even though available does not mean it's stable yet, the HA part is solid but th
   - It inherits zones, but you could also plot your location on a map
 - Sensors
   - Like motor and battery temperature
+  - Two speed sensors: `Bike speed` (reported by the bike) and `GPS speed` (derived from the position, so it may show small values while parked)
 - Binary Sensors
   - Light-status and Omni-lock status and theft status
 
