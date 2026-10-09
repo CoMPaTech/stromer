@@ -7,7 +7,7 @@ import json
 import logging
 import re
 from typing import Any
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, urlencode, urlparse
 
 import aiodns
 import aiohttp
@@ -188,7 +188,10 @@ class Stromer:
                 LOGGER.debug("  Body: %s", body_text)
             except Exception as err:
                 raise NextLocationError("Unable to provide body information from Stromer API") from err
-            raise NextLocationError("No next location returned from Stromer API") from None
+            if res.status == 200:
+                # Login form was re-rendered instead of redirecting: credentials rejected
+                raise AuthenticationError("Stromer API rejected the provided credentials")
+            raise NextLocationError(f"No next location returned from Stromer API (status {res.status})")
         res.release()
 
         next_url = f"{self.base_url}{next_loc}"
@@ -198,9 +201,17 @@ class Stromer:
         res = await self._websession.get(next_url, allow_redirects=False, timeout=self._timeout)
         res.release()
         code_loc = res.headers.get("Location")
-        if not code_loc or "=" not in code_loc:
-            raise NextLocationError("No authorization code redirect returned from Stromer API")
-        self._code = code_loc.split("=")[1]
+        if not code_loc:
+            raise NextLocationError(f"No authorization code redirect returned from Stromer API (status {res.status})")
+        redirect = urlparse(code_loc)
+        params = parse_qs(redirect.query)
+        if "code" in params:
+            self._code = params["code"][0]
+            return
+        if "error" in params or "login" in redirect.path:
+            # OAuth error or bounced back to the login page: session was not authenticated
+            raise AuthenticationError(f"Stromer API refused authorization: {params.get('error', ['login required'])[0]}")
+        raise NextLocationError(f"Unexpected authorization redirect from Stromer API: '{redirect.path}'")
 
     async def stromer_get_access_token(self) -> None:
         """Retrieve access token from API."""
