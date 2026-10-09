@@ -73,7 +73,7 @@ triggers:
     to: 'on'
   - trigger: template
     value_template: >-
-      {{ now().timestamp() - as_timestamp(states('sensor.stromer_last_status_push')) > 600 }}
+      {{ has_value('sensor.stromer_last_status_push') and now().timestamp() - as_timestamp(states('sensor.stromer_last_status_push')) > 600 }}
 conditions: []
 actions:
   - action: homeassistant.turn_off
@@ -94,7 +94,7 @@ triggers:
     to: 'off'
   - trigger: template
     value_template: >-
-      {{ now().timestamp() - as_timestamp(states('sensor.stromer_last_status_push')) > 600 }}
+      {{ has_value('sensor.stromer_last_status_push') and now().timestamp() - as_timestamp(states('sensor.stromer_last_status_push')) > 600 }}
 conditions: []
 actions:
   - action: homeassistant.turn_on

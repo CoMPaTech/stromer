@@ -197,8 +197,10 @@ class Stromer:
 
         res = await self._websession.get(next_url, allow_redirects=False, timeout=self._timeout)
         res.release()
-        self._code = res.headers.get("Location")
-        self._code = self._code.split("=")[1]  # type: ignore[union-attr]
+        code_loc = res.headers.get("Location")
+        if not code_loc or "=" not in code_loc:
+            raise NextLocationError("No authorization code redirect returned from Stromer API")
+        self._code = code_loc.split("=")[1]
 
     async def stromer_get_access_token(self) -> None:
         """Retrieve access token from API."""
