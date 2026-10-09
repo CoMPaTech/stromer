@@ -55,11 +55,15 @@ class Stromer:
         aio_timeout = aiohttp.ClientTimeout(total=self._timeout)
         self._websession = aiohttp.ClientSession(timeout=aio_timeout)
 
-        # Retrieve authorization token
-        await self.stromer_get_code()
+        try:
+            # Retrieve authorization token
+            await self.stromer_get_code()
 
-        # Retrieve access token
-        await self.stromer_get_access_token()
+            # Retrieve access token
+            await self.stromer_get_access_token()
+        except Exception:
+            await self.stromer_disconnect()
+            raise
 
         LOGGER.debug("Stromer connected!")
 

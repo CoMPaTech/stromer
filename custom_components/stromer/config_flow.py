@@ -6,6 +6,8 @@ from typing import Any
 
 import voluptuous as vol
 
+import aiodns
+import aiohttp
 from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
@@ -47,6 +49,8 @@ async def validate_input(_: HomeAssistant, data: dict[str, Any]) -> dict:
         raise CannotConnect("Error while connecting to Stromer API %s", ex) from ex
     except NextLocationError as ex:
         raise CannotConnect("Error while getting authentication location %s", ex) from ex
+    except (aiodns.error.DNSError, aiohttp.ClientError, TimeoutError) as ex:
+        raise CannotConnect("Error while connecting to Stromer API %s", ex) from ex
     finally:
         await stromer.stromer_disconnect()
 

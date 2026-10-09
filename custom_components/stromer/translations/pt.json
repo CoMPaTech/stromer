@@ -8,7 +8,7 @@
           "password": "Palavra-passe",
           "username": "Utilizador",
           "client_id": "Identificador de cliente",
-          "client_secret": "Segredo de cliente  (opcional não necessário caso o teu cliente começe por 4P)"
+          "client_secret": "Segredo de cliente (opcional, não necessário caso o teu client id comece por 4P)"
         }
       },
       "reauth_confirm": {
@@ -26,7 +26,7 @@
           "username": "Utilizador",
           "password": "Palavra-passe",
           "client_id": "Identificador de cliente",
-          "client_secret": "Segredo de cliente  (opcional não necessário caso o teu cliente começe por 4P)"
+          "client_secret": "Segredo de cliente (opcional, não necessário caso o teu client id comece por 4P)"
         }
       }
     },

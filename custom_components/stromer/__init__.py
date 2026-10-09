@@ -37,6 +37,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Initialize module
     stromer = Stromer(username, password, client_id, client_secret)
 
+    # Close the API session on unload, and on any setup failure
+    entry.async_on_unload(stromer.stromer_disconnect)
+
     # Setup connection to stromer
     try:
         await stromer.stromer_connect()
@@ -99,7 +102,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        coordinator = hass.data[DOMAIN].pop(entry.entry_id)
-        await coordinator.stromer.stromer_disconnect()
+        hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok  # type: ignore [no-any-return]
