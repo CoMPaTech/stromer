@@ -10,16 +10,37 @@
           "client_id": "Client ID",
           "client_secret": "Client Secret (optioneel, niet nodig als je client id met 4P begint)"
         }
+      },
+      "reauth_confirm": {
+        "title": "Opnieuw inloggen",
+        "description": "De Stromer inloggegevens voor {name} zijn niet meer geldig. Vul je (nieuwe) gebruikersnaam en wachtwoord in.",
+        "data": {
+          "username": "Gebruikersnaam",
+          "password": "Wachtwoord"
+        }
+      },
+      "reconfigure": {
+        "title": "Opnieuw configureren",
+        "description": "Pas de Stromer accountgegevens voor {name} aan.",
+        "data": {
+          "username": "Gebruikersnaam",
+          "password": "Wachtwoord",
+          "client_id": "Client ID",
+          "client_secret": "Client Secret (optioneel, niet nodig als je client id met 4P begint)"
+        }
       }
     },
     "error": {
       "already_configured": "Deze e-bike is al geconfigureerd",
       "invalid_auth": "Authenticatie mislukt, controleer je wachtwoord en/of ID/SECRET",
       "cannot_connect": "Verbinden mislukt",
-      "unknown": "Onbekende fout!"
+      "unknown": "Onbekende fout!",
+      "bike_not_found": "De geconfigureerde e-bike is niet gevonden in dit Stromer account"
     },
     "abort": {
-      "already_configured": "Deze e-bike is al geconfigureerd"
+      "already_configured": "Deze e-bike is al geconfigureerd",
+      "reauth_successful": "Opnieuw inloggen gelukt",
+      "reconfigure_successful": "Opnieuw configureren gelukt"
     }
   },
   "entity": {

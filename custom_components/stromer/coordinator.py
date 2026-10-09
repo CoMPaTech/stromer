@@ -1,6 +1,8 @@
 """DataUpdateCoordinator for Stromer."""
 from typing import Any, NamedTuple
 
+import aiodns
+import aiohttp
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -46,6 +48,8 @@ class StromerDataUpdateCoordinator(DataUpdateCoordinator[StromerData]):  # type:
             raise UpdateFailed(f"Error communicating with API: {ex}") from ex
         except NextLocationError as ex:
             raise UpdateFailed("Error while getting authentication location %s", ex) from ex
+        except (aiodns.error.DNSError, aiohttp.ClientError, TimeoutError) as ex:
+            raise UpdateFailed(f"Error connecting to Stromer API: {ex}") from ex
         except Exception as ex:
             raise ConfigEntryAuthFailed from ex
         return StromerData(*data)  # type: ignore [arg-type]

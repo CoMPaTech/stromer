@@ -37,6 +37,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Initialize module
     stromer = Stromer(username, password, client_id, client_secret)
 
+    # Close the API session on unload, and on any setup failure
+    entry.async_on_unload(stromer.stromer_disconnect)
+
     # Setup connection to stromer
     try:
         await stromer.stromer_connect()

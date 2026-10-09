@@ -39,6 +39,7 @@ class Stromer:
 
         self._code: str | None = None
         self._token: str | None = None
+        self._websession: aiohttp.ClientSession
 
         self.full_data: dict = {}
         self.bike_id: str | None = None
@@ -47,15 +48,22 @@ class Stromer:
 
     async def stromer_connect(self) -> bool:
         """Connect to stromer API."""
+        # Close any previous session to avoid leaking it on reconnect
+        await self.stromer_disconnect()
+
         LOGGER.debug("Creating aiohttp session")
         aio_timeout = aiohttp.ClientTimeout(total=self._timeout)
         self._websession = aiohttp.ClientSession(timeout=aio_timeout)
 
-        # Retrieve authorization token
-        await self.stromer_get_code()
+        try:
+            # Retrieve authorization token
+            await self.stromer_get_code()
 
-        # Retrieve access token
-        await self.stromer_get_access_token()
+            # Retrieve access token
+            await self.stromer_get_access_token()
+        except Exception:
+            await self.stromer_disconnect()
+            raise
 
         LOGGER.debug("Stromer connected!")
 
@@ -63,8 +71,11 @@ class Stromer:
 
     async def stromer_disconnect(self) -> None:
         """Close API web session."""
+        websession: aiohttp.ClientSession | None = getattr(self, "_websession", None)
+        if websession is None or websession.closed:
+            return
         LOGGER.debug("Closing aiohttp session")
-        await self._websession.close()
+        await websession.close()
 
     async def stromer_detect(self) -> dict:
         """Get full data (to determine bike(s))."""
