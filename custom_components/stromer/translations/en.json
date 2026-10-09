@@ -62,7 +62,7 @@
         "name": "Battery Temperature"
       },
       "bike_speed": {
-        "name": "Bike Speed"
+        "name": "Bike speed"
       },
       "motor_temp": {
         "name": "Motor Temperature"
@@ -71,7 +71,7 @@
         "name": "Power-on cycles"
       },
       "speed": {
-        "name": "Speed"
+        "name": "GPS speed"
       },
       "total_distance": {
         "name": "Total distance"

@@ -62,7 +62,7 @@
         "name": "Temperatura da Bateria"
       },
       "bike_speed": {
-        "name": "Velocidade"
+        "name": "Velocidade da bicicleta"
       },
       "motor_temp": {
         "name": "Temperatura do Motor"
@@ -71,7 +71,7 @@
         "name": "Ciclos de iniciação"
       },
       "speed": {
-        "name": "Velocidade"
+        "name": "Velocidade GPS"
       },
       "total_distance": {
         "name": "Distância total"
