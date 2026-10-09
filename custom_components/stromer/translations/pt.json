@@ -10,16 +10,37 @@
           "client_id": "Identificador de cliente",
           "client_secret": "Segredo de cliente  (opcional não necessário caso o teu cliente começe por 4P)"
         }
+      },
+      "reauth_confirm": {
+        "title": "Autenticar novamente",
+        "description": "As credenciais Stromer de {name} já não são válidas. Insira o (novo) utilizador e palavra-passe.",
+        "data": {
+          "username": "Utilizador",
+          "password": "Palavra-passe"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurar",
+        "description": "Atualize os detalhes da conta Stromer de {name}.",
+        "data": {
+          "username": "Utilizador",
+          "password": "Palavra-passe",
+          "client_id": "Identificador de cliente",
+          "client_secret": "Segredo de cliente  (opcional não necessário caso o teu cliente começe por 4P)"
+        }
       }
     },
     "error": {
       "already_configured": "Equipamento já se encontra onfigurado",
       "invalid_auth": "Autenticação invalida por favor verificar utilizador e e palavra-passe ",
       "cannot_connect": "Erro na ligação",
-      "unknown": "Erro Desconhecido!"
+      "unknown": "Erro Desconhecido!",
+      "bike_not_found": "A bicicleta configurada não foi encontrada nesta conta Stromer"
     },
     "abort": {
-      "already_configured": "Equipamento já se encontra onfigurado"
+      "already_configured": "Equipamento já se encontra onfigurado",
+      "reauth_successful": "Autenticação renovada com sucesso",
+      "reconfigure_successful": "Reconfiguração concluída com sucesso"
     }
   },
   "entity": {

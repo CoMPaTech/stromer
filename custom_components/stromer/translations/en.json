@@ -10,16 +10,37 @@
           "client_id": "Client ID",
           "client_secret": "Client Secret (optional, not needed if you client id starts with 4P)"
         }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate",
+        "description": "The Stromer credentials for {name} are no longer valid. Enter your (new) username and password.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure",
+        "description": "Update the Stromer account details for {name}.",
+        "data": {
+          "username": "Username",
+          "password": "Password",
+          "client_id": "Client ID",
+          "client_secret": "Client Secret (optional, not needed if you client id starts with 4P"
+        }
       }
     },
     "error": {
       "already_configured": "This device is already configured",
       "invalid_auth": "Invalid authentication, check your password and/or ID/SECRET",
       "cannot_connect": "Cannot connect",
-      "unknown": "Unknown error!"
+      "unknown": "Unknown error!",
+      "bike_not_found": "The configured bike was not found in this Stromer account"
     },
     "abort": {
-      "already_configured": "This device is already configured"
+      "already_configured": "This device is already configured",
+      "reauth_successful": "Re-authentication was successful",
+      "reconfigure_successful": "Reconfiguration was successful"
     }
   },
   "entity": {

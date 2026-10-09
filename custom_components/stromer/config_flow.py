@@ -1,6 +1,7 @@
 """Config flow for Stromer integration."""
 from __future__ import annotations
 
+from collections.abc import Mapping
 from typing import Any
 
 import voluptuous as vol
@@ -32,25 +33,22 @@ async def validate_input(_: HomeAssistant, data: dict[str, Any]) -> dict:
     client_secret = data.get(CONF_CLIENT_SECRET, None)
 
     # Initialize connection to stromer to validate credentials
+    stromer = Stromer(username, password, client_id, client_secret)
     try:
-        stromer = Stromer(username, password, client_id, client_secret)
         connected: bool = await stromer.stromer_connect()
+        if not connected:
+            raise InvalidAuth
+
+        LOGGER.debug("Credentials validated successfully")
+
+        # All bikes information available
+        return await stromer.stromer_detect()
     except ApiError as ex:
         raise CannotConnect("Error while connecting to Stromer API %s", ex) from ex
     except NextLocationError as ex:
         raise CannotConnect("Error while getting authentication location %s", ex) from ex
-
-    if not connected:
-        raise InvalidAuth
-
-    LOGGER.debug("Credentials validated successfully")
-
-    # All bikes information available
-    all_bikes = await stromer.stromer_detect()
-
-    await stromer.stromer_disconnect()
-
-    return all_bikes
+    finally:
+        await stromer.stromer_disconnect()
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, misc]
@@ -131,6 +129,94 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
 
         return self.async_show_form(
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
+        )
+
+    def _get_existing_entry(self) -> config_entries.ConfigEntry:
+        """Return the config entry being reauthenticated or reconfigured."""
+        entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
+        assert entry is not None
+        return entry
+
+    async def _async_validate_existing_bike(self, entry: config_entries.ConfigEntry, data: dict[str, Any]) -> dict[str, str]:
+        """Validate updated credentials still give access to the configured bike."""
+        errors: dict[str, str] = {}
+        try:
+            bikes_data = await validate_input(self.hass, data)
+        except CannotConnect:
+            errors["base"] = "cannot_connect"
+        except InvalidAuth:
+            errors["base"] = "invalid_auth"
+        except Exception:  # pylint: disable=broad-except
+            LOGGER.exception("Unexpected exception")
+            errors["base"] = "unknown"
+        else:
+            if entry.data.get("bike_id") not in [bike["bikeid"] for bike in bikes_data]:
+                errors["base"] = "bike_not_found"
+        return errors
+
+    async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> FlowResult:
+        """Handle reauthentication when the Stromer credentials are no longer valid."""
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Ask for updated username and password."""
+        entry = self._get_existing_entry()
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            data = {**entry.data, **user_input}
+            errors = await self._async_validate_existing_bike(entry, data)
+            if not errors:
+                return self.async_update_reload_and_abort(
+                    entry, data=data, reason="reauth_successful"
+                )
+
+        return self.async_show_form(
+            step_id="reauth_confirm",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_USERNAME, default=entry.data[CONF_USERNAME]): str,
+                    vol.Required(CONF_PASSWORD): str,
+                }
+            ),
+            description_placeholders={"name": entry.title},
+            errors=errors,
+        )
+
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle reconfiguration of the Stromer account details."""
+        entry = self._get_existing_entry()
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            data = {**entry.data, **user_input}
+            if not user_input.get(CONF_CLIENT_SECRET):
+                data.pop(CONF_CLIENT_SECRET, None)
+            errors = await self._async_validate_existing_bike(entry, data)
+            if not errors:
+                return self.async_update_reload_and_abort(
+                    entry, data=data, reason="reconfigure_successful"
+                )
+
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_USERNAME, default=entry.data[CONF_USERNAME]): str,
+                    vol.Required(CONF_PASSWORD): str,
+                    vol.Required(CONF_CLIENT_ID, default=entry.data[CONF_CLIENT_ID]): str,
+                    vol.Optional(
+                        CONF_CLIENT_SECRET,
+                        description={"suggested_value": entry.data.get(CONF_CLIENT_SECRET)},
+                    ): str,
+                }
+            ),
+            description_placeholders={"name": entry.title},
+            errors=errors,
         )
 
 
