@@ -4,47 +4,47 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-import voluptuous as vol
-
 import aiodns
 import aiohttp
-from homeassistant import config_entries
+from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
-from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
+import probatio
 
 from .const import BIKE_DETAILS, CONF_CLIENT_ID, CONF_CLIENT_SECRET, DOMAIN, LOGGER
-from .stromer import ApiError, NextLocationError, Stromer
+from .coordinator import StromerConfigEntry
+from .stromer import ApiError, AuthenticationError, NextLocationError, Stromer
 
-STEP_USER_DATA_SCHEMA = vol.Schema(
+STEP_USER_DATA_SCHEMA = probatio.Schema(
     {
-        vol.Required(CONF_USERNAME): str,
-        vol.Required(CONF_PASSWORD): str,
-        vol.Required(CONF_CLIENT_ID): str,
-        vol.Optional(CONF_CLIENT_SECRET): str,
+        probatio.Required(CONF_USERNAME): str,
+        probatio.Required(probatio.Secret(CONF_PASSWORD)): str,
+        probatio.Required(CONF_CLIENT_ID): str,
+        probatio.Optional(probatio.Secret(CONF_CLIENT_SECRET)): str,
     }
 )
 
 
-async def validate_input(_: HomeAssistant, data: dict[str, Any]) -> dict:
+async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict:
     """Validate the user input allows us to connect by returning a dictionary with all bikes under the account."""
     username = data[CONF_USERNAME]
     password = data[CONF_PASSWORD]
     client_id = data[CONF_CLIENT_ID]
-    client_secret = data.get(CONF_CLIENT_SECRET, None)
+    client_secret = data.get(CONF_CLIENT_SECRET)
 
     # Initialize connection to stromer to validate credentials
-    stromer = Stromer(username, password, client_id, client_secret)
+    websession = async_create_clientsession(hass, auto_cleanup=False)
+    stromer = Stromer(username, password, client_id, client_secret, websession)
     try:
-        connected: bool = await stromer.stromer_connect()
-        if not connected:
-            raise InvalidAuth
-
+        await stromer.stromer_connect()
         LOGGER.debug("Credentials validated successfully")
 
         # All bikes information available
         return await stromer.stromer_detect()
+    except AuthenticationError as ex:
+        raise InvalidAuth from ex
     except ApiError as ex:
         raise CannotConnect("Error while connecting to Stromer API %s", ex) from ex
     except NextLocationError as ex:
@@ -52,21 +52,21 @@ async def validate_input(_: HomeAssistant, data: dict[str, Any]) -> dict:
     except (aiodns.error.DNSError, aiohttp.ClientError, TimeoutError) as ex:
         raise CannotConnect("Error while connecting to Stromer API %s", ex) from ex
     finally:
-        await stromer.stromer_disconnect()
+        websession.detach()
 
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, misc]
+class StromerConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Stromer."""
 
     VERSION = 1
 
     async def async_step_bike(
         self, user_input: dict[str, Any] | None = None,
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle selecting bike step."""
         if user_input is None:
-            STEP_BIKE_DATA_SCHEMA = vol.Schema(
-                { vol.Required(BIKE_DETAILS): vol.In(list(self.friendly_names)), }
+            STEP_BIKE_DATA_SCHEMA = probatio.Schema(
+                { probatio.Required(BIKE_DETAILS): probatio.In(list(self.friendly_names)), }
             )
             return self.async_show_form(
                 step_id="bike", data_schema=STEP_BIKE_DATA_SCHEMA
@@ -90,7 +90,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial step."""
         if user_input is None:
             return self.async_show_form(
@@ -135,13 +135,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
         )
 
-    def _get_existing_entry(self) -> config_entries.ConfigEntry:
-        """Return the config entry being reauthenticated or reconfigured."""
-        entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
-        assert entry is not None
-        return entry
-
-    async def _async_validate_existing_bike(self, entry: config_entries.ConfigEntry, data: dict[str, Any]) -> dict[str, str]:
+    async def _async_validate_existing_bike(self, entry: StromerConfigEntry, data: dict[str, Any]) -> dict[str, str]:
         """Validate updated credentials still give access to the configured bike."""
         errors: dict[str, str] = {}
         try:
@@ -158,31 +152,29 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
                 errors["base"] = "bike_not_found"
         return errors
 
-    async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> FlowResult:
+    async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> ConfigFlowResult:
         """Handle reauthentication when the Stromer credentials are no longer valid."""
         return await self.async_step_reauth_confirm()
 
     async def async_step_reauth_confirm(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Ask for updated username and password."""
-        entry = self._get_existing_entry()
+        entry = self._get_reauth_entry()
         errors: dict[str, str] = {}
 
         if user_input is not None:
             data = {**entry.data, **user_input}
             errors = await self._async_validate_existing_bike(entry, data)
             if not errors:
-                return self.async_update_reload_and_abort(
-                    entry, data=data, reason="reauth_successful"
-                )
+                return self.async_update_reload_and_abort(entry, data=data)
 
         return self.async_show_form(
             step_id="reauth_confirm",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Required(CONF_USERNAME, default=entry.data[CONF_USERNAME]): str,
-                    vol.Required(CONF_PASSWORD): str,
+                    probatio.Required(CONF_USERNAME, default=entry.data[CONF_USERNAME]): str,
+                    probatio.Required(probatio.Secret(CONF_PASSWORD)): str,
                 }
             ),
             description_placeholders={"name": entry.title},
@@ -191,9 +183,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
 
     async def async_step_reconfigure(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle reconfiguration of the Stromer account details."""
-        entry = self._get_existing_entry()
+        entry = self._get_reconfigure_entry()
         errors: dict[str, str] = {}
 
         if user_input is not None:
@@ -202,19 +194,17 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
                 data.pop(CONF_CLIENT_SECRET, None)
             errors = await self._async_validate_existing_bike(entry, data)
             if not errors:
-                return self.async_update_reload_and_abort(
-                    entry, data=data, reason="reconfigure_successful"
-                )
+                return self.async_update_reload_and_abort(entry, data=data)
 
         return self.async_show_form(
             step_id="reconfigure",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Required(CONF_USERNAME, default=entry.data[CONF_USERNAME]): str,
-                    vol.Required(CONF_PASSWORD): str,
-                    vol.Required(CONF_CLIENT_ID, default=entry.data[CONF_CLIENT_ID]): str,
-                    vol.Optional(
-                        CONF_CLIENT_SECRET,
+                    probatio.Required(CONF_USERNAME, default=entry.data[CONF_USERNAME]): str,
+                    probatio.Required(probatio.Secret(CONF_PASSWORD)): str,
+                    probatio.Required(CONF_CLIENT_ID, default=entry.data[CONF_CLIENT_ID]): str,
+                    probatio.Optional(
+                        probatio.Secret(CONF_CLIENT_SECRET),
                         description={"suggested_value": entry.data.get(CONF_CLIENT_SECRET)},
                     ): str,
                 }
@@ -224,9 +214,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
         )
 
 
-class CannotConnect(HomeAssistantError):  # type: ignore[misc]
+class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""
 
 
-class InvalidAuth(HomeAssistantError):  # type: ignore[misc]
+class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""

@@ -1,0 +1,37 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "light_on": {
+        "default": "mdi:lightbulb-off",
+        "state": {
+          "on": "mdi:lightbulb"
+        }
+      },
+      "lock_flag": {
+        "default": "mdi:lock-open",
+        "state": {
+          "on": "mdi:lock"
+        }
+      },
+      "theft_flag": {
+        "default": "mdi:shield-moon",
+        "state": {
+          "on": "mdi:alarm-light"
+        }
+      }
+    },
+    "button": {
+      "reset_trip_data": {
+        "default": "mdi:map-marker-distance"
+      }
+    },
+    "switch": {
+      "light": {
+        "default": "mdi:light-flood-down"
+      },
+      "lock": {
+        "default": "mdi:lock"
+      }
+    }
+  }
+}

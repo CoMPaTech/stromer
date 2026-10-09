@@ -2,6 +2,24 @@
 
 ## Changelog
 
+### OCT 2026 [0.5.0]
+
+**Requires Home Assistant 2026.10 or newer**, stay on v0.4.3 for older versions.
+
+- Add re-authentication and reconfigure flows, so changed credentials no longer require removing the integration #224
+- Label the GPS speed and bike speed sensors distinctly (also for nl/pt) #227 #152
+- Rename the `battery_health` sensor label to `Battery health` #133
+- Use the Home Assistant provided HTTP session and close sessions properly on reload and failures
+- Only request re-authentication when the Stromer API rejects the credentials, network errors now retry
+- Store runtime data on the config entry and pass the config entry to the coordinator
+- Move entity icons to `icons.json` (binary sensors now show state based icons)
+- Fix the device tracker failing when the bike has no position
+- Fix translation typos (en, pt)
+
+### SEP 2025 [0.4.3]
+
+- Improve login debugging and request following
+
 ### JUL 2025 [0.4.2]
 
 - Attempt to fix getting initial code (due to DNS issues) #139
