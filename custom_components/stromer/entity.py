@@ -1,17 +1,15 @@
 """Generic Stromer Entity Class."""
 from __future__ import annotations
 
-from typing import Any
-
 from homeassistant.const import ATTR_NAME
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
-from .coordinator import StromerData, StromerDataUpdateCoordinator
+from .coordinator import StromerDataUpdateCoordinator
 
 
-class StromerEntity(CoordinatorEntity[StromerData]):  # type:ignore [misc]
+class StromerEntity(CoordinatorEntity[StromerDataUpdateCoordinator]):
     """Represent a Stromer Entity."""
 
     coordinator: StromerDataUpdateCoordinator
@@ -42,16 +40,6 @@ class StromerEntity(CoordinatorEntity[StromerData]):  # type:ignore [misc]
                 ATTR_NAME: data.get("bike_name"),
             }
         )
-
-    @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        return super().available  # type: ignore[no-any-return]
-
-    @property
-    def device(self) -> dict[str, Any]:
-        """Return data for this device."""
-        return self.coordinator.data.bike_id  # type: ignore[no-any-return]
 
     async def async_added_to_hass(self) -> None:
         """Subscribe to updates."""

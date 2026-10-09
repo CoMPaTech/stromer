@@ -8,45 +8,46 @@ from homeassistant.components.switch import (
     SwitchEntity,
     SwitchEntityDescription,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .const import DOMAIN, LOGGER
-from .coordinator import StromerDataUpdateCoordinator
+from .const import LOGGER
+from .coordinator import StromerConfigEntry, StromerDataUpdateCoordinator
 from .entity import StromerEntity
 
 SWITCHES: tuple[SwitchEntityDescription, ...] = (
     SwitchEntityDescription(
         key="lock_flag",
         translation_key="lock",
-        icon="mdi:lock",
         device_class=SwitchDeviceClass.SWITCH,
     ),
     SwitchEntityDescription(
         key="light_on",
         translation_key="light",
-        icon="mdi:light-flood-down",
         device_class=SwitchDeviceClass.SWITCH,
     ),
 )
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: StromerConfigEntry,
+    async_add_entities: AddConfigEntryEntitiesCallback,
+) -> None:
     """Set up the Stromer Switches from a config entry."""
-    coordinator = hass.data[DOMAIN][config_entry.entry_id]
+    coordinator = config_entry.runtime_data
 
     entities = []
-    for idx, data in enumerate(coordinator.data.bikedata.items()):
+    for data in coordinator.data.bikedata.items():
         for description in SWITCHES:
             if data[0] == description.key:
-                entities.append(StromerSwitch(coordinator, idx, data, description))
+                entities.append(StromerSwitch(coordinator, data, description))
                 LOGGER.debug("Add %s %s switch", data, description.translation_key)
 
     async_add_entities(entities, update_before_add=False)
 
 
-class StromerSwitch(StromerEntity, SwitchEntity):  # type: ignore[misc]
+class StromerSwitch(StromerEntity, SwitchEntity):
     """Representation of a Switch."""
 
     _attr_has_entity_name = True
@@ -56,8 +57,7 @@ class StromerSwitch(StromerEntity, SwitchEntity):  # type: ignore[misc]
     def __init__(
         self,
         coordinator: StromerDataUpdateCoordinator,
-        idx: int,
-        data: dict,
+        data: tuple[str, Any],
         description: SwitchEntityDescription,
     ):
         """Initialize the sensor."""
@@ -70,7 +70,7 @@ class StromerSwitch(StromerEntity, SwitchEntity):  # type: ignore[misc]
         self.entity_description = description
         self._attr_unique_id = f"{device_id}-{description.key}-sw"
 
-    @callback  # type: ignore[misc]
+    @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._attr_is_on = self._coordinator.data.bikedata.get(self._ent)

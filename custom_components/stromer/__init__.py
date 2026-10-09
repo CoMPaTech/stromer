@@ -2,15 +2,17 @@
 
 from datetime import timedelta
 
-from homeassistant.config_entries import ConfigEntry
+import aiodns
+import aiohttp
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .const import CONF_CLIENT_ID, CONF_CLIENT_SECRET, DOMAIN, LOGGER
-from .coordinator import StromerDataUpdateCoordinator
-from .stromer import ApiError, NextLocationError, Stromer
+from .coordinator import StromerConfigEntry, StromerDataUpdateCoordinator
+from .stromer import ApiError, AuthenticationError, NextLocationError, Stromer
 
 SCAN_INTERVAL = timedelta(minutes=10)
 
@@ -23,9 +25,8 @@ PLATFORMS: list[Platform] = [
 ]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: StromerConfigEntry) -> bool:
     """Set up Stromer from a config entry."""
-    hass.data.setdefault(DOMAIN, {})
     LOGGER.debug(f"Stromer entry: {entry}")
 
     # Fetch configuration data from config_flow
@@ -34,23 +35,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     client_id = entry.data[CONF_CLIENT_ID]
     client_secret = entry.data.get(CONF_CLIENT_SECRET, None)
 
-    # Initialize module
-    stromer = Stromer(username, password, client_id, client_secret)
-
-    # Close the API session on unload, and on any setup failure
-    entry.async_on_unload(stromer.stromer_disconnect)
+    # Own session (and cookie jar) per entry, HA closes it on unload
+    stromer = Stromer(username, password, client_id, client_secret, async_create_clientsession(hass))
 
     # Setup connection to stromer
     try:
         await stromer.stromer_connect()
-    except ApiError as ex:
-        raise ConfigEntryNotReady("Error while communicating to Stromer API") from ex
-    except NextLocationError as ex:
-        raise ConfigEntryNotReady("Error while getting authentication location %s", ex) from ex
+    except AuthenticationError as ex:
+        raise ConfigEntryAuthFailed(str(ex)) from ex
+    except (ApiError, NextLocationError, aiodns.error.DNSError, aiohttp.ClientError, TimeoutError) as ex:
+        raise ConfigEntryNotReady(f"Error while connecting to Stromer API: {ex}") from ex
 
     # Ensure migration from v3 single bike
     if "bike_id" not in entry.data:
-        bikedata = await stromer.stromer_detect()
+        try:
+            bikedata = await stromer.stromer_detect()
+        except ApiError as ex:
+            raise ConfigEntryNotReady(f"Error while detecting bikes: {ex}") from ex
         new_data = {
             **entry.data,
             "bike_id": bikedata[0]["bikeid"],
@@ -69,11 +70,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.config_entries.async_update_entry(entry, unique_id=f"stromerbike-{stromer.bike_id}")
 
     # Set up coordinator for fetching data
-    coordinator = StromerDataUpdateCoordinator(hass, stromer, SCAN_INTERVAL)  # type: ignore[arg-type]
+    coordinator = StromerDataUpdateCoordinator(hass, entry, stromer, SCAN_INTERVAL)
     await coordinator.async_config_entry_first_refresh()
 
-    # Store coordinator for use in platforms
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
+    entry.runtime_data = coordinator
 
     # Add bike to the HA device registry
     device_registry = dr.async_get(hass)
@@ -99,9 +99,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: StromerConfigEntry) -> bool:
     """Unload a config entry."""
-    if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        hass.data[DOMAIN].pop(entry.entry_id)
-
-    return unload_ok  # type: ignore [no-any-return]
+    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)

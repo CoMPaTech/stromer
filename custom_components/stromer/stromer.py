@@ -7,7 +7,7 @@ import json
 import logging
 import re
 from typing import Any
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, urlencode, urlparse
 
 import aiodns
 import aiohttp
@@ -18,7 +18,16 @@ LOGGER = logging.getLogger(__name__)
 class Stromer:
     """Set up Stromer."""
 
-    def __init__(self, username: str, password: str, client_id: str, client_secret: str, timeout: int = 60) -> None:
+    def __init__(
+        self,
+        username: str,
+        password: str,
+        client_id: str,
+        client_secret: str | None,
+        websession: aiohttp.ClientSession,
+        *,
+        timeout: int = 60,
+    ) -> None:
         """Initialize stromer module."""
         self.bike: dict = {}
         self.status: dict = {}
@@ -31,15 +40,15 @@ class Stromer:
 
         LOGGER.debug("Initializing Stromer with API version %s", self._api_version)
 
-        self._timeout: int = timeout
+        self._timeout = aiohttp.ClientTimeout(total=timeout)
         self._username: str = username
         self._password: str = password
         self._client_id: str = client_id
-        self._client_secret: str = client_secret
+        self._client_secret: str | None = client_secret
 
         self._code: str | None = None
         self._token: str | None = None
-        self._websession: aiohttp.ClientSession
+        self._websession = websession
 
         self.full_data: dict = {}
         self.bike_id: str | None = None
@@ -48,34 +57,18 @@ class Stromer:
 
     async def stromer_connect(self) -> bool:
         """Connect to stromer API."""
-        # Close any previous session to avoid leaking it on reconnect
-        await self.stromer_disconnect()
+        # Stale CSRF/session cookies from an earlier login break a fresh one
+        self._websession.cookie_jar.clear()
 
-        LOGGER.debug("Creating aiohttp session")
-        aio_timeout = aiohttp.ClientTimeout(total=self._timeout)
-        self._websession = aiohttp.ClientSession(timeout=aio_timeout)
+        # Retrieve authorization token
+        await self.stromer_get_code()
 
-        try:
-            # Retrieve authorization token
-            await self.stromer_get_code()
-
-            # Retrieve access token
-            await self.stromer_get_access_token()
-        except Exception:
-            await self.stromer_disconnect()
-            raise
+        # Retrieve access token
+        await self.stromer_get_access_token()
 
         LOGGER.debug("Stromer connected!")
 
         return True
-
-    async def stromer_disconnect(self) -> None:
-        """Close API web session."""
-        websession: aiohttp.ClientSession | None = getattr(self, "_websession", None)
-        if websession is None or websession.closed:
-            return
-        LOGGER.debug("Closing aiohttp session")
-        await websession.close()
 
     async def stromer_detect(self) -> dict:
         """Get full data (to determine bike(s))."""
@@ -128,7 +121,7 @@ class Stromer:
             try:
                 log = f"Attempt {attempt + 1}/{retries} to interface with Stromer on {url}"
                 LOGGER.debug(log)
-                res = await self._websession.get(url, timeout=timeout)
+                res = await self._websession.get(url, timeout=aiohttp.ClientTimeout(total=timeout))
                 res.raise_for_status()
                 return res
             except (aiodns.error.DNSError, aiohttp.ClientError, TimeoutError) as e:
@@ -142,6 +135,7 @@ class Stromer:
                     log = f"Failed to get to Stromer API after {retries} attempts."
                     LOGGER.error(log)
                     raise  # Re-raise the last exception if all retries fail
+        raise ApiError("No attempts made to reach the Stromer API")
 
     async def stromer_get_code(self) -> None:
         """Retrieve authorization code from API."""
@@ -157,6 +151,8 @@ class Stromer:
             log = f"Stromer error: api call failed: {e} with content {res}"
             LOGGER.error(log)
             raise ApiError from e
+        finally:
+            res.release()
 
         qs = urlencode(
             {
@@ -178,7 +174,7 @@ class Stromer:
             data["next"] = "/o/authorize/?" + qs
 
         res = await self._websession.post(
-            url, data=data, headers={"Referer": url}, allow_redirects=False
+            url, data=data, headers={"Referer": url}, allow_redirects=False, timeout=self._timeout
         )
         next_loc = res.headers.get("Location")
         if not next_loc:
@@ -192,15 +188,30 @@ class Stromer:
                 LOGGER.debug("  Body: %s", body_text)
             except Exception as err:
                 raise NextLocationError("Unable to provide body information from Stromer API") from err
-            raise NextLocationError("No next location returned from Stromer API") from None
+            if res.status == 200:
+                # Login form was re-rendered instead of redirecting: credentials rejected
+                raise AuthenticationError("Stromer API rejected the provided credentials")
+            raise NextLocationError(f"No next location returned from Stromer API (status {res.status})")
+        res.release()
 
         next_url = f"{self.base_url}{next_loc}"
         if not (next_loc.startswith("/") or next_loc.startswith("?")):
             raise NextLocationError(f"Invalid next location: '{next_loc}'. Expected start with '/' or '?'.")
 
-        res = await self._websession.get(next_url, allow_redirects=False)
-        self._code = res.headers.get("Location")
-        self._code = self._code.split("=")[1]  # type: ignore[union-attr]
+        res = await self._websession.get(next_url, allow_redirects=False, timeout=self._timeout)
+        res.release()
+        code_loc = res.headers.get("Location")
+        if not code_loc:
+            raise NextLocationError(f"No authorization code redirect returned from Stromer API (status {res.status})")
+        redirect = urlparse(code_loc)
+        params = parse_qs(redirect.query)
+        if "code" in params:
+            self._code = params["code"][0]
+            return
+        if "error" in params or "login" in redirect.path:
+            # OAuth error or bounced back to the login page: session was not authenticated
+            raise AuthenticationError(f"Stromer API refused authorization: {params.get('error', ['login required'])[0]}")
+        raise NextLocationError(f"Unexpected authorization redirect from Stromer API: '{redirect.path}'")
 
     async def stromer_get_access_token(self) -> None:
         """Retrieve access token from API."""
@@ -217,8 +228,10 @@ class Stromer:
             data["client_secret"] = self._client_secret
             data["redirect_uri"] = "stromerauth://auth"
 
-        res = await self._websession.post(url, data=data)
+        res = await self._websession.post(url, data=data, timeout=self._timeout)
         token = json.loads(await res.text())
+        if "access_token" not in token:
+            raise AuthenticationError(f"No access token returned from Stromer API: {token.get('error')}")
         self._token = token["access_token"]
 
     async def stromer_call_lock(self, state: bool) -> None:
@@ -230,7 +243,7 @@ class Stromer:
 
         data = {"lock": state}
         headers = {"Authorization": f"Bearer {self._token}"}
-        res = await self._websession.post(url, headers=headers, json=data)
+        res = await self._websession.post(url, headers=headers, json=data, timeout=self._timeout)
         ret = json.loads(await res.text())
         log = f"API call lock status: {res.status}"
         LOGGER.debug(log)
@@ -246,7 +259,7 @@ class Stromer:
 
         data = {"mode": state}
         headers = {"Authorization": f"Bearer {self._token}"}
-        res = await self._websession.post(url, headers=headers, json=data)
+        res = await self._websession.post(url, headers=headers, json=data, timeout=self._timeout)
         ret = json.loads(await res.text())
         log = f"API call light status: {res.status}"
         LOGGER.debug(log)
@@ -261,18 +274,19 @@ class Stromer:
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
 
         headers = {"Authorization": f"Bearer {self._token}"}
-        res = await self._websession.delete(url, headers=headers)
+        res = await self._websession.delete(url, headers=headers, timeout=self._timeout)
+        res.release()
         if res.status != 204:
             raise ApiError
 
-    async def stromer_call_api(self, endpoint: str, full=False) -> Any:
+    async def stromer_call_api(self, endpoint: str, full: bool = False) -> Any:
         """Retrieve data from the API."""
         url = f"{self.base_url}/rapi/mobile/v4.1/{endpoint}"
         if self._api_version == "v3":
             url = f"{self.base_url}/rapi/mobile/v2/{endpoint}"
 
         headers = {"Authorization": f"Bearer {self._token}"}
-        res = await self._websession.get(url, headers=headers, data={})
+        res = await self._websession.get(url, headers=headers, data={}, timeout=self._timeout)
         ret = json.loads(await res.text())
         log = f"API call status: {res.status}"
         LOGGER.debug(log)
@@ -288,3 +302,6 @@ class ApiError(Exception):
 
 class NextLocationError(Exception):
     """Error to indicate something wrong returned in next location."""
+
+class AuthenticationError(Exception):
+    """Error to indicate the Stromer API rejected the credentials."""
